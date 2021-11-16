@@ -1,0 +1,29 @@
+{
+  "name": "relay-sc",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "generate:relay": "relay-compiler"
+  },
+  "dependencies": {
+    "next": "^12.0.4",
+    "react": "^18.0.0-beta-96ca8d915-20211115",
+    "react-dom": "^18.0.0-beta-96ca8d915-20211115",
+    "react-relay": "^12.0.0",
+    "relay-runtime": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "17.0.34",
+    "@types/react-relay": "^11.0.2",
+    "@types/relay-runtime": "^12.0.0",
+    "babel-plugin-relay": "^12.0.0",
+    "graphql": "^15.7.2",
+    "relay-compiler": "^12.0.0",
+    "relay-compiler-language-typescript": "^14.3.0",
+    "relay-config": "^12.0.0",
+    "typescript": "4.4.4"
+  }
+}

@@ -1,0 +1,15 @@
+type BlogPost {
+  author: String
+  headline: String
+  slug: String
+  tags: [String!]
+  title: String
+}
+
+type ContentRoot {
+  blogPosts: [BlogPost!]
+}
+
+type Query {
+  content: ContentRoot!
+}
