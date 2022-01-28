@@ -1,15 +1,1498 @@
-type BlogPost {
-  author: String
-  headline: String
-  slug: String
-  tags: [String!]
-  title: String
+schema {
+  query: query_root
+  mutation: mutation_root
+  subscription: subscription_root
 }
 
-type ContentRoot {
-  blogPosts: [BlogPost!]
+"""whether this query should be cached (Hasura Cloud only)"""
+directive @cached(
+  """measured in seconds"""
+  ttl: Int! = 60
+
+  """refresh the cache entry"""
+  refresh: Boolean! = false
+) on QUERY
+
+"""
+Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
+"""
+input Int_comparison_exp {
+  _eq: Int
+  _gt: Int
+  _gte: Int
+  _in: [Int!]
+  _is_null: Boolean
+  _lt: Int
+  _lte: Int
+  _neq: Int
+  _nin: [Int!]
 }
 
-type Query {
-  content: ContentRoot!
+input SampleInput {
+  password: String!
+  username: String!
 }
+
+type SampleOutput {
+  accessToken: String!
+}
+
+"""
+Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'.
+"""
+input String_comparison_exp {
+  _eq: String
+  _gt: String
+  _gte: String
+
+  """does the column match the given case-insensitive pattern"""
+  _ilike: String
+  _in: [String!]
+
+  """
+  does the column match the given POSIX regular expression, case insensitive
+  """
+  _iregex: String
+  _is_null: Boolean
+
+  """does the column match the given pattern"""
+  _like: String
+  _lt: String
+  _lte: String
+  _neq: String
+
+  """does the column NOT match the given case-insensitive pattern"""
+  _nilike: String
+  _nin: [String!]
+
+  """
+  does the column NOT match the given POSIX regular expression, case insensitive
+  """
+  _niregex: String
+
+  """does the column NOT match the given pattern"""
+  _nlike: String
+
+  """
+  does the column NOT match the given POSIX regular expression, case sensitive
+  """
+  _nregex: String
+
+  """does the column NOT match the given SQL regular expression"""
+  _nsimilar: String
+
+  """
+  does the column match the given POSIX regular expression, case sensitive
+  """
+  _regex: String
+
+  """does the column match the given SQL regular expression"""
+  _similar: String
+}
+
+"""
+columns and relationships of "block"
+"""
+type block {
+  """An array relationship"""
+  blocks(
+    """distinct select on columns"""
+    distinct_on: [block_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [block_order_by!]
+
+    """filter the rows returned"""
+    where: block_bool_exp
+  ): [block!]!
+
+  """An aggregate relationship"""
+  blocks_aggregate(
+    """distinct select on columns"""
+    distinct_on: [block_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [block_order_by!]
+
+    """filter the rows returned"""
+    where: block_bool_exp
+  ): block_aggregate!
+  created_at: timestamptz!
+  id: uuid!
+  kind: String!
+  parent_id: uuid
+  post_id: uuid
+  updated_at: timestamptz!
+  value: String!
+}
+
+"""
+aggregated selection of "block"
+"""
+type block_aggregate {
+  aggregate: block_aggregate_fields
+  nodes: [block!]!
+}
+
+"""
+aggregate fields of "block"
+"""
+type block_aggregate_fields {
+  count(columns: [block_select_column!], distinct: Boolean): Int!
+  max: block_max_fields
+  min: block_min_fields
+}
+
+"""
+order by aggregate values of table "block"
+"""
+input block_aggregate_order_by {
+  count: order_by
+  max: block_max_order_by
+  min: block_min_order_by
+}
+
+"""
+input type for inserting array relation for remote table "block"
+"""
+input block_arr_rel_insert_input {
+  data: [block_insert_input!]!
+
+  """on conflict condition"""
+  on_conflict: block_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "block". All fields are combined with a logical 'AND'.
+"""
+input block_bool_exp {
+  _and: [block_bool_exp!]
+  _not: block_bool_exp
+  _or: [block_bool_exp!]
+  blocks: block_bool_exp
+  created_at: timestamptz_comparison_exp
+  id: uuid_comparison_exp
+  kind: String_comparison_exp
+  parent_id: uuid_comparison_exp
+  post_id: uuid_comparison_exp
+  updated_at: timestamptz_comparison_exp
+  value: String_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "block"
+"""
+enum block_constraint {
+  """unique or primary key constraint"""
+  block_pkey
+}
+
+"""
+input type for inserting data into table "block"
+"""
+input block_insert_input {
+  blocks: block_arr_rel_insert_input
+  created_at: timestamptz
+  id: uuid
+  kind: String
+  parent_id: uuid
+  post_id: uuid
+  updated_at: timestamptz
+  value: String
+}
+
+"""aggregate max on columns"""
+type block_max_fields {
+  created_at: timestamptz
+  id: uuid
+  kind: String
+  parent_id: uuid
+  post_id: uuid
+  updated_at: timestamptz
+  value: String
+}
+
+"""
+order by max() on columns of table "block"
+"""
+input block_max_order_by {
+  created_at: order_by
+  id: order_by
+  kind: order_by
+  parent_id: order_by
+  post_id: order_by
+  updated_at: order_by
+  value: order_by
+}
+
+"""aggregate min on columns"""
+type block_min_fields {
+  created_at: timestamptz
+  id: uuid
+  kind: String
+  parent_id: uuid
+  post_id: uuid
+  updated_at: timestamptz
+  value: String
+}
+
+"""
+order by min() on columns of table "block"
+"""
+input block_min_order_by {
+  created_at: order_by
+  id: order_by
+  kind: order_by
+  parent_id: order_by
+  post_id: order_by
+  updated_at: order_by
+  value: order_by
+}
+
+"""
+response of any mutation on the table "block"
+"""
+type block_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [block!]!
+}
+
+"""
+on conflict condition type for table "block"
+"""
+input block_on_conflict {
+  constraint: block_constraint!
+  update_columns: [block_update_column!]! = []
+  where: block_bool_exp
+}
+
+"""Ordering options when selecting data from "block"."""
+input block_order_by {
+  blocks_aggregate: block_aggregate_order_by
+  created_at: order_by
+  id: order_by
+  kind: order_by
+  parent_id: order_by
+  post_id: order_by
+  updated_at: order_by
+  value: order_by
+}
+
+"""primary key columns input for table: block"""
+input block_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "block"
+"""
+enum block_select_column {
+  """column name"""
+  created_at
+
+  """column name"""
+  id
+
+  """column name"""
+  kind
+
+  """column name"""
+  parent_id
+
+  """column name"""
+  post_id
+
+  """column name"""
+  updated_at
+
+  """column name"""
+  value
+}
+
+"""
+input type for updating data in table "block"
+"""
+input block_set_input {
+  created_at: timestamptz
+  id: uuid
+  kind: String
+  parent_id: uuid
+  post_id: uuid
+  updated_at: timestamptz
+  value: String
+}
+
+"""
+update columns of table "block"
+"""
+enum block_update_column {
+  """column name"""
+  created_at
+
+  """column name"""
+  id
+
+  """column name"""
+  kind
+
+  """column name"""
+  parent_id
+
+  """column name"""
+  post_id
+
+  """column name"""
+  updated_at
+
+  """column name"""
+  value
+}
+
+"""mutation root"""
+type mutation_root {
+  actionName(arg1: SampleInput!): SampleOutput
+
+  """
+  delete data from the table: "block"
+  """
+  delete_block(
+    """filter the rows which have to be deleted"""
+    where: block_bool_exp!
+  ): block_mutation_response
+
+  """
+  delete single row from the table: "block"
+  """
+  delete_block_by_pk(id: uuid!): block
+
+  """
+  delete data from the table: "organization"
+  """
+  delete_organization(
+    """filter the rows which have to be deleted"""
+    where: organization_bool_exp!
+  ): organization_mutation_response
+
+  """
+  delete single row from the table: "organization"
+  """
+  delete_organization_by_pk(id: Int!): organization
+
+  """
+  delete data from the table: "user_info"
+  """
+  delete_user_info(
+    """filter the rows which have to be deleted"""
+    where: user_info_bool_exp!
+  ): user_info_mutation_response
+
+  """
+  delete single row from the table: "user_info"
+  """
+  delete_user_info_by_pk(id: Int!): user_info
+
+  """
+  insert data into the table: "block"
+  """
+  insert_block(
+    """the rows to be inserted"""
+    objects: [block_insert_input!]!
+
+    """on conflict condition"""
+    on_conflict: block_on_conflict
+  ): block_mutation_response
+
+  """
+  insert a single row into the table: "block"
+  """
+  insert_block_one(
+    """the row to be inserted"""
+    object: block_insert_input!
+
+    """on conflict condition"""
+    on_conflict: block_on_conflict
+  ): block
+
+  """
+  insert data into the table: "organization"
+  """
+  insert_organization(
+    """the rows to be inserted"""
+    objects: [organization_insert_input!]!
+
+    """on conflict condition"""
+    on_conflict: organization_on_conflict
+  ): organization_mutation_response
+
+  """
+  insert a single row into the table: "organization"
+  """
+  insert_organization_one(
+    """the row to be inserted"""
+    object: organization_insert_input!
+
+    """on conflict condition"""
+    on_conflict: organization_on_conflict
+  ): organization
+
+  """
+  insert data into the table: "user_info"
+  """
+  insert_user_info(
+    """the rows to be inserted"""
+    objects: [user_info_insert_input!]!
+
+    """on conflict condition"""
+    on_conflict: user_info_on_conflict
+  ): user_info_mutation_response
+
+  """
+  insert a single row into the table: "user_info"
+  """
+  insert_user_info_one(
+    """the row to be inserted"""
+    object: user_info_insert_input!
+
+    """on conflict condition"""
+    on_conflict: user_info_on_conflict
+  ): user_info
+
+  """
+  update data of the table: "block"
+  """
+  update_block(
+    """sets the columns of the filtered rows to the given values"""
+    _set: block_set_input
+
+    """filter the rows which have to be updated"""
+    where: block_bool_exp!
+  ): block_mutation_response
+
+  """
+  update single row of the table: "block"
+  """
+  update_block_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: block_set_input
+    pk_columns: block_pk_columns_input!
+  ): block
+
+  """
+  update data of the table: "organization"
+  """
+  update_organization(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: organization_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: organization_set_input
+
+    """filter the rows which have to be updated"""
+    where: organization_bool_exp!
+  ): organization_mutation_response
+
+  """
+  update single row of the table: "organization"
+  """
+  update_organization_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: organization_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: organization_set_input
+    pk_columns: organization_pk_columns_input!
+  ): organization
+
+  """
+  update data of the table: "user_info"
+  """
+  update_user_info(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: user_info_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: user_info_set_input
+
+    """filter the rows which have to be updated"""
+    where: user_info_bool_exp!
+  ): user_info_mutation_response
+
+  """
+  update single row of the table: "user_info"
+  """
+  update_user_info_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: user_info_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: user_info_set_input
+    pk_columns: user_info_pk_columns_input!
+  ): user_info
+}
+
+"""column ordering options"""
+enum order_by {
+  """in ascending order, nulls last"""
+  asc
+
+  """in ascending order, nulls first"""
+  asc_nulls_first
+
+  """in ascending order, nulls last"""
+  asc_nulls_last
+
+  """in descending order, nulls first"""
+  desc
+
+  """in descending order, nulls first"""
+  desc_nulls_first
+
+  """in descending order, nulls last"""
+  desc_nulls_last
+}
+
+"""
+columns and relationships of "organization"
+"""
+type organization {
+  id: Int!
+  organization: String!
+
+  """
+  A computed field, executes function "organization_descendant_users"
+  """
+  organization_descendant_users(
+    """distinct select on columns"""
+    distinct_on: [user_info_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_info_order_by!]
+
+    """filter the rows returned"""
+    where: user_info_bool_exp
+  ): [user_info!]
+  parent: Int
+}
+
+"""
+aggregated selection of "organization"
+"""
+type organization_aggregate {
+  aggregate: organization_aggregate_fields
+  nodes: [organization!]!
+}
+
+"""
+aggregate fields of "organization"
+"""
+type organization_aggregate_fields {
+  avg: organization_avg_fields
+  count(columns: [organization_select_column!], distinct: Boolean): Int!
+  max: organization_max_fields
+  min: organization_min_fields
+  stddev: organization_stddev_fields
+  stddev_pop: organization_stddev_pop_fields
+  stddev_samp: organization_stddev_samp_fields
+  sum: organization_sum_fields
+  var_pop: organization_var_pop_fields
+  var_samp: organization_var_samp_fields
+  variance: organization_variance_fields
+}
+
+"""aggregate avg on columns"""
+type organization_avg_fields {
+  id: Float
+  parent: Float
+}
+
+"""
+Boolean expression to filter rows from the table "organization". All fields are combined with a logical 'AND'.
+"""
+input organization_bool_exp {
+  _and: [organization_bool_exp!]
+  _not: organization_bool_exp
+  _or: [organization_bool_exp!]
+  id: Int_comparison_exp
+  organization: String_comparison_exp
+  organization_descendant_users: user_info_bool_exp
+  parent: Int_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "organization"
+"""
+enum organization_constraint {
+  """unique or primary key constraint"""
+  organization_pkey
+}
+
+input organization_descendant_users_args {
+  organization_row: organization_scalar
+}
+
+"""
+input type for incrementing numeric columns in table "organization"
+"""
+input organization_inc_input {
+  id: Int
+  parent: Int
+}
+
+"""
+input type for inserting data into table "organization"
+"""
+input organization_insert_input {
+  id: Int
+  organization: String
+  parent: Int
+}
+
+"""aggregate max on columns"""
+type organization_max_fields {
+  id: Int
+  organization: String
+  parent: Int
+}
+
+"""aggregate min on columns"""
+type organization_min_fields {
+  id: Int
+  organization: String
+  parent: Int
+}
+
+"""
+response of any mutation on the table "organization"
+"""
+type organization_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [organization!]!
+}
+
+"""
+on conflict condition type for table "organization"
+"""
+input organization_on_conflict {
+  constraint: organization_constraint!
+  update_columns: [organization_update_column!]! = []
+  where: organization_bool_exp
+}
+
+"""Ordering options when selecting data from "organization"."""
+input organization_order_by {
+  id: order_by
+  organization: order_by
+  organization_descendant_users_aggregate: user_info_aggregate_order_by
+  parent: order_by
+}
+
+"""primary key columns input for table: organization"""
+input organization_pk_columns_input {
+  id: Int!
+}
+
+scalar organization_scalar
+
+"""
+select columns of table "organization"
+"""
+enum organization_select_column {
+  """column name"""
+  id
+
+  """column name"""
+  organization
+
+  """column name"""
+  parent
+}
+
+"""
+input type for updating data in table "organization"
+"""
+input organization_set_input {
+  id: Int
+  organization: String
+  parent: Int
+}
+
+"""aggregate stddev on columns"""
+type organization_stddev_fields {
+  id: Float
+  parent: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type organization_stddev_pop_fields {
+  id: Float
+  parent: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type organization_stddev_samp_fields {
+  id: Float
+  parent: Float
+}
+
+"""aggregate sum on columns"""
+type organization_sum_fields {
+  id: Int
+  parent: Int
+}
+
+"""
+update columns of table "organization"
+"""
+enum organization_update_column {
+  """column name"""
+  id
+
+  """column name"""
+  organization
+
+  """column name"""
+  parent
+}
+
+"""aggregate var_pop on columns"""
+type organization_var_pop_fields {
+  id: Float
+  parent: Float
+}
+
+"""aggregate var_samp on columns"""
+type organization_var_samp_fields {
+  id: Float
+  parent: Float
+}
+
+"""aggregate variance on columns"""
+type organization_variance_fields {
+  id: Float
+  parent: Float
+}
+
+type query_root {
+  """
+  fetch data from the table: "block"
+  """
+  block(
+    """distinct select on columns"""
+    distinct_on: [block_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [block_order_by!]
+
+    """filter the rows returned"""
+    where: block_bool_exp
+  ): [block!]!
+
+  """
+  fetch aggregated fields from the table: "block"
+  """
+  block_aggregate(
+    """distinct select on columns"""
+    distinct_on: [block_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [block_order_by!]
+
+    """filter the rows returned"""
+    where: block_bool_exp
+  ): block_aggregate!
+
+  """fetch data from the table: "block" using primary key columns"""
+  block_by_pk(id: uuid!): block
+
+  """
+  fetch data from the table: "organization"
+  """
+  organization(
+    """distinct select on columns"""
+    distinct_on: [organization_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [organization_order_by!]
+
+    """filter the rows returned"""
+    where: organization_bool_exp
+  ): [organization!]!
+
+  """
+  fetch aggregated fields from the table: "organization"
+  """
+  organization_aggregate(
+    """distinct select on columns"""
+    distinct_on: [organization_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [organization_order_by!]
+
+    """filter the rows returned"""
+    where: organization_bool_exp
+  ): organization_aggregate!
+
+  """fetch data from the table: "organization" using primary key columns"""
+  organization_by_pk(id: Int!): organization
+
+  """
+  execute function "organization_descendant_users" which returns "user_info"
+  """
+  organization_descendant_users(
+    """
+    input parameters for function "organization_descendant_users"
+    """
+    args: organization_descendant_users_args!
+
+    """distinct select on columns"""
+    distinct_on: [user_info_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_info_order_by!]
+
+    """filter the rows returned"""
+    where: user_info_bool_exp
+  ): [user_info!]!
+
+  """
+  execute function "organization_descendant_users" and query aggregates on result of table type "user_info"
+  """
+  organization_descendant_users_aggregate(
+    """
+    input parameters for function "organization_descendant_users_aggregate"
+    """
+    args: organization_descendant_users_args!
+
+    """distinct select on columns"""
+    distinct_on: [user_info_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_info_order_by!]
+
+    """filter the rows returned"""
+    where: user_info_bool_exp
+  ): user_info_aggregate!
+
+  """
+  fetch data from the table: "user_info"
+  """
+  user_info(
+    """distinct select on columns"""
+    distinct_on: [user_info_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_info_order_by!]
+
+    """filter the rows returned"""
+    where: user_info_bool_exp
+  ): [user_info!]!
+
+  """
+  fetch aggregated fields from the table: "user_info"
+  """
+  user_info_aggregate(
+    """distinct select on columns"""
+    distinct_on: [user_info_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_info_order_by!]
+
+    """filter the rows returned"""
+    where: user_info_bool_exp
+  ): user_info_aggregate!
+
+  """fetch data from the table: "user_info" using primary key columns"""
+  user_info_by_pk(id: Int!): user_info
+}
+
+type subscription_root {
+  """
+  fetch data from the table: "block"
+  """
+  block(
+    """distinct select on columns"""
+    distinct_on: [block_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [block_order_by!]
+
+    """filter the rows returned"""
+    where: block_bool_exp
+  ): [block!]!
+
+  """
+  fetch aggregated fields from the table: "block"
+  """
+  block_aggregate(
+    """distinct select on columns"""
+    distinct_on: [block_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [block_order_by!]
+
+    """filter the rows returned"""
+    where: block_bool_exp
+  ): block_aggregate!
+
+  """fetch data from the table: "block" using primary key columns"""
+  block_by_pk(id: uuid!): block
+
+  """
+  fetch data from the table: "organization"
+  """
+  organization(
+    """distinct select on columns"""
+    distinct_on: [organization_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [organization_order_by!]
+
+    """filter the rows returned"""
+    where: organization_bool_exp
+  ): [organization!]!
+
+  """
+  fetch aggregated fields from the table: "organization"
+  """
+  organization_aggregate(
+    """distinct select on columns"""
+    distinct_on: [organization_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [organization_order_by!]
+
+    """filter the rows returned"""
+    where: organization_bool_exp
+  ): organization_aggregate!
+
+  """fetch data from the table: "organization" using primary key columns"""
+  organization_by_pk(id: Int!): organization
+
+  """
+  execute function "organization_descendant_users" which returns "user_info"
+  """
+  organization_descendant_users(
+    """
+    input parameters for function "organization_descendant_users"
+    """
+    args: organization_descendant_users_args!
+
+    """distinct select on columns"""
+    distinct_on: [user_info_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_info_order_by!]
+
+    """filter the rows returned"""
+    where: user_info_bool_exp
+  ): [user_info!]!
+
+  """
+  execute function "organization_descendant_users" and query aggregates on result of table type "user_info"
+  """
+  organization_descendant_users_aggregate(
+    """
+    input parameters for function "organization_descendant_users_aggregate"
+    """
+    args: organization_descendant_users_args!
+
+    """distinct select on columns"""
+    distinct_on: [user_info_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_info_order_by!]
+
+    """filter the rows returned"""
+    where: user_info_bool_exp
+  ): user_info_aggregate!
+
+  """
+  fetch data from the table: "user_info"
+  """
+  user_info(
+    """distinct select on columns"""
+    distinct_on: [user_info_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_info_order_by!]
+
+    """filter the rows returned"""
+    where: user_info_bool_exp
+  ): [user_info!]!
+
+  """
+  fetch aggregated fields from the table: "user_info"
+  """
+  user_info_aggregate(
+    """distinct select on columns"""
+    distinct_on: [user_info_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_info_order_by!]
+
+    """filter the rows returned"""
+    where: user_info_bool_exp
+  ): user_info_aggregate!
+
+  """fetch data from the table: "user_info" using primary key columns"""
+  user_info_by_pk(id: Int!): user_info
+}
+
+scalar timestamptz
+
+"""
+Boolean expression to compare columns of type "timestamptz". All fields are combined with logical 'AND'.
+"""
+input timestamptz_comparison_exp {
+  _eq: timestamptz
+  _gt: timestamptz
+  _gte: timestamptz
+  _in: [timestamptz!]
+  _is_null: Boolean
+  _lt: timestamptz
+  _lte: timestamptz
+  _neq: timestamptz
+  _nin: [timestamptz!]
+}
+
+"""
+columns and relationships of "user_info"
+"""
+type user_info {
+  email: String
+  id: Int!
+  organization: Int!
+}
+
+"""
+aggregated selection of "user_info"
+"""
+type user_info_aggregate {
+  aggregate: user_info_aggregate_fields
+  nodes: [user_info!]!
+}
+
+"""
+aggregate fields of "user_info"
+"""
+type user_info_aggregate_fields {
+  avg: user_info_avg_fields
+  count(columns: [user_info_select_column!], distinct: Boolean): Int!
+  max: user_info_max_fields
+  min: user_info_min_fields
+  stddev: user_info_stddev_fields
+  stddev_pop: user_info_stddev_pop_fields
+  stddev_samp: user_info_stddev_samp_fields
+  sum: user_info_sum_fields
+  var_pop: user_info_var_pop_fields
+  var_samp: user_info_var_samp_fields
+  variance: user_info_variance_fields
+}
+
+"""
+order by aggregate values of table "user_info"
+"""
+input user_info_aggregate_order_by {
+  avg: user_info_avg_order_by
+  count: order_by
+  max: user_info_max_order_by
+  min: user_info_min_order_by
+  stddev: user_info_stddev_order_by
+  stddev_pop: user_info_stddev_pop_order_by
+  stddev_samp: user_info_stddev_samp_order_by
+  sum: user_info_sum_order_by
+  var_pop: user_info_var_pop_order_by
+  var_samp: user_info_var_samp_order_by
+  variance: user_info_variance_order_by
+}
+
+"""aggregate avg on columns"""
+type user_info_avg_fields {
+  id: Float
+  organization: Float
+}
+
+"""
+order by avg() on columns of table "user_info"
+"""
+input user_info_avg_order_by {
+  id: order_by
+  organization: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "user_info". All fields are combined with a logical 'AND'.
+"""
+input user_info_bool_exp {
+  _and: [user_info_bool_exp!]
+  _not: user_info_bool_exp
+  _or: [user_info_bool_exp!]
+  email: String_comparison_exp
+  id: Int_comparison_exp
+  organization: Int_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "user_info"
+"""
+enum user_info_constraint {
+  """unique or primary key constraint"""
+  user_info_email_key
+
+  """unique or primary key constraint"""
+  user_info_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "user_info"
+"""
+input user_info_inc_input {
+  id: Int
+  organization: Int
+}
+
+"""
+input type for inserting data into table "user_info"
+"""
+input user_info_insert_input {
+  email: String
+  id: Int
+  organization: Int
+}
+
+"""aggregate max on columns"""
+type user_info_max_fields {
+  email: String
+  id: Int
+  organization: Int
+}
+
+"""
+order by max() on columns of table "user_info"
+"""
+input user_info_max_order_by {
+  email: order_by
+  id: order_by
+  organization: order_by
+}
+
+"""aggregate min on columns"""
+type user_info_min_fields {
+  email: String
+  id: Int
+  organization: Int
+}
+
+"""
+order by min() on columns of table "user_info"
+"""
+input user_info_min_order_by {
+  email: order_by
+  id: order_by
+  organization: order_by
+}
+
+"""
+response of any mutation on the table "user_info"
+"""
+type user_info_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [user_info!]!
+}
+
+"""
+on conflict condition type for table "user_info"
+"""
+input user_info_on_conflict {
+  constraint: user_info_constraint!
+  update_columns: [user_info_update_column!]! = []
+  where: user_info_bool_exp
+}
+
+"""Ordering options when selecting data from "user_info"."""
+input user_info_order_by {
+  email: order_by
+  id: order_by
+  organization: order_by
+}
+
+"""primary key columns input for table: user_info"""
+input user_info_pk_columns_input {
+  id: Int!
+}
+
+"""
+select columns of table "user_info"
+"""
+enum user_info_select_column {
+  """column name"""
+  email
+
+  """column name"""
+  id
+
+  """column name"""
+  organization
+}
+
+"""
+input type for updating data in table "user_info"
+"""
+input user_info_set_input {
+  email: String
+  id: Int
+  organization: Int
+}
+
+"""aggregate stddev on columns"""
+type user_info_stddev_fields {
+  id: Float
+  organization: Float
+}
+
+"""
+order by stddev() on columns of table "user_info"
+"""
+input user_info_stddev_order_by {
+  id: order_by
+  organization: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type user_info_stddev_pop_fields {
+  id: Float
+  organization: Float
+}
+
+"""
+order by stddev_pop() on columns of table "user_info"
+"""
+input user_info_stddev_pop_order_by {
+  id: order_by
+  organization: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type user_info_stddev_samp_fields {
+  id: Float
+  organization: Float
+}
+
+"""
+order by stddev_samp() on columns of table "user_info"
+"""
+input user_info_stddev_samp_order_by {
+  id: order_by
+  organization: order_by
+}
+
+"""aggregate sum on columns"""
+type user_info_sum_fields {
+  id: Int
+  organization: Int
+}
+
+"""
+order by sum() on columns of table "user_info"
+"""
+input user_info_sum_order_by {
+  id: order_by
+  organization: order_by
+}
+
+"""
+update columns of table "user_info"
+"""
+enum user_info_update_column {
+  """column name"""
+  email
+
+  """column name"""
+  id
+
+  """column name"""
+  organization
+}
+
+"""aggregate var_pop on columns"""
+type user_info_var_pop_fields {
+  id: Float
+  organization: Float
+}
+
+"""
+order by var_pop() on columns of table "user_info"
+"""
+input user_info_var_pop_order_by {
+  id: order_by
+  organization: order_by
+}
+
+"""aggregate var_samp on columns"""
+type user_info_var_samp_fields {
+  id: Float
+  organization: Float
+}
+
+"""
+order by var_samp() on columns of table "user_info"
+"""
+input user_info_var_samp_order_by {
+  id: order_by
+  organization: order_by
+}
+
+"""aggregate variance on columns"""
+type user_info_variance_fields {
+  id: Float
+  organization: Float
+}
+
+"""
+order by variance() on columns of table "user_info"
+"""
+input user_info_variance_order_by {
+  id: order_by
+  organization: order_by
+}
+
+scalar uuid
+
+"""
+Boolean expression to compare columns of type "uuid". All fields are combined with logical 'AND'.
+"""
+input uuid_comparison_exp {
+  _eq: uuid
+  _gt: uuid
+  _gte: uuid
+  _in: [uuid!]
+  _is_null: Boolean
+  _lt: uuid
+  _lte: uuid
+  _neq: uuid
+  _nin: [uuid!]
+}
+
