@@ -6,9 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "generate:relay": "relay-compiler"
+    "generate:relay": "relay-compiler --watch"
   },
   "dependencies": {
+    "@ionic/core": "^6.0.4",
     "next": "^12.0.9",
     "react": "^18.0.0-beta-96ca8d915-20211115",
     "react-dom": "^18.0.0-beta-96ca8d915-20211115",
