@@ -8,9 +8,8 @@ import "@ionic/core/css/structure.css";
 import "@ionic/core/css/text-alignment.css";
 import "@ionic/core/css/text-transformation.css";
 import "@ionic/core/css/typography.css";
-import { defineCustomElements as ionDefineCustomElements } from "@ionic/core/loader";
 import type { AppProps } from "next/app";
-import React, { useEffect } from "react";
+import React from "react";
 import { RelayEnvironmentProvider } from "react-relay";
 import { createRelayClientEnvironment } from "../relay_client_environment";
 import { createRelayServerEnvironment } from "../relay_server_environment";
@@ -21,13 +20,6 @@ const env =
     : createRelayClientEnvironment();
 
 function MyApp({ Component, pageProps }: AppProps) {
-  useEffect(() => {
-    ionDefineCustomElements(window);
-  });
-
-  useEffect(() => {
-    console.log(env);
-  }, [env]);
   return (
     <RelayEnvironmentProvider environment={env}>
       <Component {...pageProps} />

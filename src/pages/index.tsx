@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <>
       <Link href="rsc" passHref>
-        <ion-item>RSC</ion-item>
+        <a>RSC</a>
       </Link>
       <Suspense fallback="loading blocks">
         <Blocks queryReference={preloadedQuery} />
