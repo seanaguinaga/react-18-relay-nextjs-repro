@@ -14,17 +14,18 @@ import React, { useEffect } from "react";
 import { RelayEnvironmentProvider } from "react-relay";
 import { createRelayClientEnvironment } from "../relay_client_environment";
 import { createRelayServerEnvironment } from "../relay_server_environment";
-export const env =
+
+export const environment =
   typeof window === "undefined"
     ? createRelayServerEnvironment()
     : createRelayClientEnvironment();
 
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
-    typeof window !== "undefined" && defineCustomElements(window);
+    defineCustomElements(window);
   });
   return (
-    <RelayEnvironmentProvider environment={env}>
+    <RelayEnvironmentProvider environment={environment}>
       <Component {...pageProps} />
     </RelayEnvironmentProvider>
   );
