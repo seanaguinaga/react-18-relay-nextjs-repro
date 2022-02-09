@@ -1,17 +1,12 @@
 import React from "react";
-import { PreloadedQuery, usePreloadedQuery } from "react-relay";
+import { useLazyLoadQuery } from "react-relay";
 import indexPage from "../queries/indexPage";
 import { indexPage_indexQuery } from "../queries/__generated__/indexPage_indexQuery.graphql";
 
-interface BlocksProps {
-  queryReference: PreloadedQuery<indexPage_indexQuery>;
-}
+interface BlocksProps {}
 
-const Blocks: React.FC<BlocksProps> = ({ queryReference }) => {
-  const data = usePreloadedQuery<indexPage_indexQuery>(
-    indexPage,
-    queryReference
-  );
+const Blocks: React.FC<BlocksProps> = () => {
+  const data = useLazyLoadQuery<indexPage_indexQuery>(indexPage, {});
 
   return (
     <ion-list>

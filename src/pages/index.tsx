@@ -1,18 +1,10 @@
 import Link from "next/link";
 import React, { Suspense } from "react";
-import { loadQuery } from "react-relay";
+import { fetchQuery } from "react-relay";
 import Blocks from "../components/Blocks.client";
 import indexPage from "../queries/indexPage";
-import { indexPage_indexQuery } from "../queries/__generated__/indexPage_indexQuery.graphql";
 import { initEnvironment } from "../relay";
 
-let environment = initEnvironment();
-
-let preloadedQuery = loadQuery<indexPage_indexQuery>(
-  environment,
-  indexPage,
-  {}
-);
 export default function Home() {
   return (
     <div>
@@ -20,8 +12,20 @@ export default function Home() {
         <ion-item>RSC</ion-item>
       </Link>
       <Suspense fallback={<div>Loading...</div>}>
-        <Blocks queryReference={preloadedQuery} />
+        <Blocks />
       </Suspense>
     </div>
   );
+}
+
+export async function getServerSideProps() {
+  const environment = initEnvironment();
+  await fetchQuery(environment, indexPage, {}).toPromise();
+  const initialRecords = environment.getStore().getSource().toJSON();
+
+  return {
+    props: {
+      initialRecords,
+    },
+  };
 }
