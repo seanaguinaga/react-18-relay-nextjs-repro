@@ -14,7 +14,7 @@ import React, { useEffect } from "react";
 import { RelayEnvironmentProvider } from "react-relay";
 import { createRelayClientEnvironment } from "../relay_client_environment";
 import { createRelayServerEnvironment } from "../relay_server_environment";
-const env =
+export const env =
   typeof window === "undefined"
     ? createRelayServerEnvironment()
     : createRelayClientEnvironment();

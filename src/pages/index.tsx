@@ -1,21 +1,21 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import React, { Suspense } from "react";
-import { loadQuery, useRelayEnvironment } from "react-relay";
+import { loadQuery } from "react-relay";
 import indexPage from "../queries/indexPage";
 import type { indexPage_indexQuery } from "../queries/__generated__/indexPage_indexQuery.graphql";
+import { env } from "./_app";
 
 let Blocks = dynamic(() => import("../components/Blocks"));
 
+let environment = env;
+
+let preloadedQuery = loadQuery<indexPage_indexQuery>(
+  environment,
+  indexPage,
+  {}
+);
 export default function Home() {
-  let environment = useRelayEnvironment();
-
-  let preloadedQuery = loadQuery<indexPage_indexQuery>(
-    environment,
-    indexPage,
-    {}
-  );
-
   return (
     <ErrorBoundary>
       <Link href="/rsc" passHref>
