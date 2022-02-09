@@ -1,14 +1,12 @@
-import dynamic from "next/dynamic";
-import Link from "next/link";
 import React, { Suspense } from "react";
 import { loadQuery } from "react-relay";
+import Blocks from "../components/Blocks.client";
 import indexPage from "../queries/indexPage";
-import type { indexPage_indexQuery } from "../queries/__generated__/indexPage_indexQuery.graphql";
+import { indexPage_indexQuery } from "../queries/__generated__/indexPage_indexQuery.graphql";
+import { createRelayClientEnvironment } from "../relay_client_environment";
 import { env } from "./_app";
 
-let Blocks = dynamic(() => import("../components/Blocks"), { suspense: true });
-
-let environment = env;
+let environment = env || createRelayClientEnvironment();
 
 let preloadedQuery = loadQuery<indexPage_indexQuery>(
   environment,
@@ -17,13 +15,11 @@ let preloadedQuery = loadQuery<indexPage_indexQuery>(
 );
 export default function Home() {
   return (
-    <>
-      <Link href="/rsc" passHref>
-        <ion-item>RSC</ion-item>
-      </Link>
-      <Suspense fallback="loading blocks">
+    <div>
+      <h1>RSC</h1>
+      <Suspense fallback={<div>Loading...</div>}>
         <Blocks queryReference={preloadedQuery} />
       </Suspense>
-    </>
+    </div>
   );
 }
