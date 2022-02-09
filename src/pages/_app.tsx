@@ -21,7 +21,7 @@ export const env =
 
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
-    defineCustomElements(window);
+    typeof window !== "undefined" && defineCustomElements(window);
   });
   return (
     <RelayEnvironmentProvider environment={env}>
