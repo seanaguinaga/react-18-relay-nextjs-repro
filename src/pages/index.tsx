@@ -4,7 +4,9 @@ import { loadQuery } from "react-relay";
 import Blocks from "../components/Blocks.client";
 import indexPage from "../queries/indexPage";
 import { indexPage_indexQuery } from "../queries/__generated__/indexPage_indexQuery.graphql";
-import { environment } from "./_app";
+import { initEnvironment } from "../relay";
+
+let environment = initEnvironment();
 
 let preloadedQuery = loadQuery<indexPage_indexQuery>(
   environment,
