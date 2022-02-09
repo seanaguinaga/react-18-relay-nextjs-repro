@@ -4,5 +4,6 @@ module.exports = {
   experimental: {
     runtime: "nodejs",
     reactRoot: true,
+    concurrentFeatures: true,
   },
 };
