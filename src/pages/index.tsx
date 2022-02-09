@@ -6,7 +6,7 @@ import indexPage from "../queries/indexPage";
 import type { indexPage_indexQuery } from "../queries/__generated__/indexPage_indexQuery.graphql";
 import { env } from "./_app";
 
-let Blocks = dynamic(() => import("../components/Blocks"));
+let Blocks = dynamic(() => import("../components/Blocks"), { suspense: true });
 
 let environment = env;
 
