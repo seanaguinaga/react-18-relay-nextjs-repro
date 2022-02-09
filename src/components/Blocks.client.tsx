@@ -14,11 +14,12 @@ const Blocks: React.FC<BlocksProps> = ({ queryReference }) => {
   );
 
   return (
-    <ul>
+    <ion-list>
+      <ion-list-header>Blocks</ion-list-header>
       {data.block.map((block) => (
-        <li key={block.id}>{block.value}</li>
+        <ion-item key={block.id}>{block.value}</ion-item>
       ))}
-    </ul>
+    </ion-list>
   );
 };
 
