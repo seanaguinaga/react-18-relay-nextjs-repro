@@ -2,9 +2,8 @@ module.exports = {
   swcMinify: true,
   swcLoader: true,
   experimental: {
-    runtime: "edge",
+    runtime: "nodejs",
     reactRoot: true,
     concurrentFeatures: true,
-    serverComponents: true,
   },
 };
