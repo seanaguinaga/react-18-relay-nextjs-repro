@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Environment, Network, RecordSource, Store } from "relay-runtime";
+import { RecordMap } from "relay-runtime/lib/store/RelayStoreTypes";
 import { fetchGraphQL } from "./fetch_graphql";
 
 let relayEnvironment: Environment | undefined;
@@ -13,7 +14,7 @@ function createEnvironment() {
   });
 }
 
-export function initEnvironment(initialRecords?: any) {
+export function initEnvironment(initialRecords?: RecordMap) {
   // Create a network layer from the fetch function
   const environment = relayEnvironment ?? createEnvironment();
 
