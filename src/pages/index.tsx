@@ -5,9 +5,7 @@ import { loadQuery, useRelayEnvironment } from "react-relay";
 import indexPage from "../queries/indexPage";
 import type { indexPage_indexQuery } from "../queries/__generated__/indexPage_indexQuery.graphql";
 
-let Blocks = dynamic(() => import("../components/Blocks.client"), {
-  suspense: true,
-});
+let Blocks = dynamic(() => import("../components/Blocks"));
 
 export default function Home() {
   let environment = useRelayEnvironment();
