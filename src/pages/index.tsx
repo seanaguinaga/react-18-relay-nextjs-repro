@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React, { Suspense } from "react";
 import { loadQuery } from "react-relay";
 import Blocks from "../components/Blocks.client";
@@ -16,7 +17,9 @@ let preloadedQuery = loadQuery<indexPage_indexQuery>(
 export default function Home() {
   return (
     <div>
-      <h1>RSC</h1>
+      <Link href="/rsc" passHref>
+        <ion-item>RSC</ion-item>
+      </Link>
       <Suspense fallback={<div>Loading...</div>}>
         <Blocks queryReference={preloadedQuery} />
       </Suspense>

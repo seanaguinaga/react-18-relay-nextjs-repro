@@ -16,7 +16,7 @@ const Blocks: React.FC<BlocksProps> = ({ queryReference }) => {
   return (
     <ul>
       <li>Blocks</li>
-      {data.block.map((block) => (
+      {data?.block.map((block) => (
         <li key={block.id}>{block.value}</li>
       ))}
     </ul>
