@@ -12,7 +12,10 @@ import { defineCustomElements } from "@ionic/core/loader";
 import type { AppProps } from "next/app";
 import React, { useEffect } from "react";
 import { RelayEnvironmentProvider } from "react-relay";
+import initAuth from "../firebase/initAuth";
 import { useEnvironment } from "../relay";
+
+initAuth();
 
 function MyApp({ Component, pageProps }: AppProps) {
   const environment = useEnvironment(pageProps.initialRecords);

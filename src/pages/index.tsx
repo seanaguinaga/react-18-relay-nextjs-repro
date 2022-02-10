@@ -1,31 +1,15 @@
 import Link from "next/link";
-import React, { Suspense } from "react";
-import { fetchQuery } from "react-relay";
-import Blocks from "../components/Blocks.client";
-import indexPage from "../queries/indexPage";
-import { initEnvironment } from "../relay";
+import React from "react";
 
-export default function Home() {
+export default function Landing() {
   return (
     <div>
-      <Link href="/rsc" passHref>
-        <ion-item>RSC</ion-item>
+      <Link href="/home" passHref>
+        <ion-item>Home</ion-item>
       </Link>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Blocks />
-      </Suspense>
+      <Link href="/authentication" passHref>
+        <ion-item>Authentication</ion-item>
+      </Link>
     </div>
   );
-}
-
-export async function getServerSideProps() {
-  const environment = initEnvironment();
-  await fetchQuery(environment, indexPage, {}).toPromise();
-  const initialRecords = environment.getStore().getSource().toJSON();
-
-  return {
-    props: {
-      initialRecords,
-    },
-  };
 }
