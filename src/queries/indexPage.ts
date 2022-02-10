@@ -2,9 +2,13 @@ import { graphql } from "react-relay";
 
 export default graphql`
   query indexPage_indexQuery {
-    block {
+    brick {
       id
-      value
+      int_id
+      created_at
+      updated_at
+      name
+      ...BrickValueItem_brick
     }
   }
 `;

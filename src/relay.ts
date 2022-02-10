@@ -1,5 +1,3 @@
-import { SSRPropsContext } from "next-firebase-auth";
-import { ParsedUrlQuery } from "querystring";
 import { useMemo } from "react";
 import {
   Environment,
@@ -18,32 +16,28 @@ let relayEnvironment: Environment | undefined;
 async function fetchRelay(
   params: RequestParameters,
   variables: unknown,
-  ctx?: SSRPropsContext<ParsedUrlQuery>
+  token?: string
 ) {
   console.log(
     `fetching query ${params.name} with ${JSON.stringify(variables)}`
   );
-  let token = await ctx?.AuthUser.getIdToken();
   return fetchGraphQL(params.text, variables, token);
 }
 
-function createEnvironment(ctx?: SSRPropsContext<ParsedUrlQuery>) {
+function createEnvironment(token?: string) {
   return new Environment({
     // Create a network layer from the fetch function
     network: Network.create((params: RequestParameters, variables: unknown) =>
-      fetchRelay(params, variables, ctx)
+      fetchRelay(params, variables, token)
     ),
     store: new Store(new RecordSource()),
     isServer: typeof window === "undefined",
   });
 }
 
-export function initEnvironment(
-  initialRecords?: RecordMap,
-  ctx?: SSRPropsContext<ParsedUrlQuery>
-) {
+export function initEnvironment(initialRecords?: RecordMap, token?: string) {
   // Create a network layer from the fetch function
-  const environment = relayEnvironment ?? createEnvironment(ctx);
+  const environment = relayEnvironment ?? createEnvironment(token);
 
   // If your page has Next.js data fetching methods that use Relay, the initial records
   // will get hydrated here

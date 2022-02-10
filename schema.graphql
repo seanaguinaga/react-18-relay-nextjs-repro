@@ -28,13 +28,14 @@ input Int_comparison_exp {
   _nin: [Int!]
 }
 
-input SampleInput {
-  password: String!
-  username: String!
+input ResolveFirestoreDataInput {
+  document_path: String!
 }
 
-type SampleOutput {
-  accessToken: String!
+type ResolveFirestoreDataOutput {
+  """An object relationship"""
+  Yes: block!
+  firestore_data: jsonb!
 }
 
 """
@@ -130,6 +131,7 @@ type block {
     where: block_bool_exp
   ): block_aggregate!
   created_at: timestamptz!
+  document_path: String
   id: uuid!
   kind: String!
   parent_id: uuid
@@ -183,6 +185,7 @@ input block_bool_exp {
   _or: [block_bool_exp!]
   blocks: block_bool_exp
   created_at: timestamptz_comparison_exp
+  document_path: String_comparison_exp
   id: uuid_comparison_exp
   kind: String_comparison_exp
   parent_id: uuid_comparison_exp
@@ -205,6 +208,7 @@ input type for inserting data into table "block"
 input block_insert_input {
   blocks: block_arr_rel_insert_input
   created_at: timestamptz
+  document_path: String
   id: uuid
   kind: String
   parent_id: uuid
@@ -216,6 +220,7 @@ input block_insert_input {
 """aggregate max on columns"""
 type block_max_fields {
   created_at: timestamptz
+  document_path: String
   id: uuid
   kind: String
   parent_id: uuid
@@ -229,6 +234,7 @@ order by max() on columns of table "block"
 """
 input block_max_order_by {
   created_at: order_by
+  document_path: order_by
   id: order_by
   kind: order_by
   parent_id: order_by
@@ -240,6 +246,7 @@ input block_max_order_by {
 """aggregate min on columns"""
 type block_min_fields {
   created_at: timestamptz
+  document_path: String
   id: uuid
   kind: String
   parent_id: uuid
@@ -253,6 +260,7 @@ order by min() on columns of table "block"
 """
 input block_min_order_by {
   created_at: order_by
+  document_path: order_by
   id: order_by
   kind: order_by
   parent_id: order_by
@@ -285,6 +293,7 @@ input block_on_conflict {
 input block_order_by {
   blocks_aggregate: block_aggregate_order_by
   created_at: order_by
+  document_path: order_by
   id: order_by
   kind: order_by
   parent_id: order_by
@@ -304,6 +313,9 @@ select columns of table "block"
 enum block_select_column {
   """column name"""
   created_at
+
+  """column name"""
+  document_path
 
   """column name"""
   id
@@ -329,6 +341,7 @@ input type for updating data in table "block"
 """
 input block_set_input {
   created_at: timestamptz
+  document_path: String
   id: uuid
   kind: String
   parent_id: uuid
@@ -343,6 +356,9 @@ update columns of table "block"
 enum block_update_column {
   """column name"""
   created_at
+
+  """column name"""
+  document_path
 
   """column name"""
   id
@@ -363,10 +379,703 @@ enum block_update_column {
   value
 }
 
+"""
+columns and relationships of "brick"
+"""
+type brick {
+  created_at: timestamptz!
+  id: uuid!
+  int_id: Int!
+  name: String!
+  updated_at: timestamptz!
+  value: String!
+}
+
+"""
+aggregated selection of "brick"
+"""
+type brick_aggregate {
+  aggregate: brick_aggregate_fields
+  nodes: [brick!]!
+}
+
+"""
+aggregate fields of "brick"
+"""
+type brick_aggregate_fields {
+  avg: brick_avg_fields
+  count(columns: [brick_select_column!], distinct: Boolean): Int!
+  max: brick_max_fields
+  min: brick_min_fields
+  stddev: brick_stddev_fields
+  stddev_pop: brick_stddev_pop_fields
+  stddev_samp: brick_stddev_samp_fields
+  sum: brick_sum_fields
+  var_pop: brick_var_pop_fields
+  var_samp: brick_var_samp_fields
+  variance: brick_variance_fields
+}
+
+"""aggregate avg on columns"""
+type brick_avg_fields {
+  int_id: Float
+}
+
+"""
+Boolean expression to filter rows from the table "brick". All fields are combined with a logical 'AND'.
+"""
+input brick_bool_exp {
+  _and: [brick_bool_exp!]
+  _not: brick_bool_exp
+  _or: [brick_bool_exp!]
+  created_at: timestamptz_comparison_exp
+  id: uuid_comparison_exp
+  int_id: Int_comparison_exp
+  name: String_comparison_exp
+  updated_at: timestamptz_comparison_exp
+  value: String_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "brick"
+"""
+enum brick_constraint {
+  """unique or primary key constraint"""
+  brick_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "brick"
+"""
+input brick_inc_input {
+  int_id: Int
+}
+
+"""
+input type for inserting data into table "brick"
+"""
+input brick_insert_input {
+  created_at: timestamptz
+  id: uuid
+  int_id: Int
+  name: String
+  updated_at: timestamptz
+  value: String
+}
+
+"""aggregate max on columns"""
+type brick_max_fields {
+  created_at: timestamptz
+  id: uuid
+  int_id: Int
+  name: String
+  updated_at: timestamptz
+  value: String
+}
+
+"""aggregate min on columns"""
+type brick_min_fields {
+  created_at: timestamptz
+  id: uuid
+  int_id: Int
+  name: String
+  updated_at: timestamptz
+  value: String
+}
+
+"""
+response of any mutation on the table "brick"
+"""
+type brick_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [brick!]!
+}
+
+"""
+on conflict condition type for table "brick"
+"""
+input brick_on_conflict {
+  constraint: brick_constraint!
+  update_columns: [brick_update_column!]! = []
+  where: brick_bool_exp
+}
+
+"""Ordering options when selecting data from "brick"."""
+input brick_order_by {
+  created_at: order_by
+  id: order_by
+  int_id: order_by
+  name: order_by
+  updated_at: order_by
+  value: order_by
+}
+
+"""primary key columns input for table: brick"""
+input brick_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "brick"
+"""
+enum brick_select_column {
+  """column name"""
+  created_at
+
+  """column name"""
+  id
+
+  """column name"""
+  int_id
+
+  """column name"""
+  name
+
+  """column name"""
+  updated_at
+
+  """column name"""
+  value
+}
+
+"""
+input type for updating data in table "brick"
+"""
+input brick_set_input {
+  created_at: timestamptz
+  id: uuid
+  int_id: Int
+  name: String
+  updated_at: timestamptz
+  value: String
+}
+
+"""aggregate stddev on columns"""
+type brick_stddev_fields {
+  int_id: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type brick_stddev_pop_fields {
+  int_id: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type brick_stddev_samp_fields {
+  int_id: Float
+}
+
+"""aggregate sum on columns"""
+type brick_sum_fields {
+  int_id: Int
+}
+
+"""
+update columns of table "brick"
+"""
+enum brick_update_column {
+  """column name"""
+  created_at
+
+  """column name"""
+  id
+
+  """column name"""
+  int_id
+
+  """column name"""
+  name
+
+  """column name"""
+  updated_at
+
+  """column name"""
+  value
+}
+
+"""aggregate var_pop on columns"""
+type brick_var_pop_fields {
+  int_id: Float
+}
+
+"""aggregate var_samp on columns"""
+type brick_var_samp_fields {
+  int_id: Float
+}
+
+"""aggregate variance on columns"""
+type brick_variance_fields {
+  int_id: Float
+}
+
+"""
+columns and relationships of "cart_item"
+"""
+type cart_item {
+  id: uuid!
+  product_id: uuid!
+  store_id: uuid!
+}
+
+"""
+aggregated selection of "cart_item"
+"""
+type cart_item_aggregate {
+  aggregate: cart_item_aggregate_fields
+  nodes: [cart_item!]!
+}
+
+"""
+aggregate fields of "cart_item"
+"""
+type cart_item_aggregate_fields {
+  count(columns: [cart_item_select_column!], distinct: Boolean): Int!
+  max: cart_item_max_fields
+  min: cart_item_min_fields
+}
+
+"""
+Boolean expression to filter rows from the table "cart_item". All fields are combined with a logical 'AND'.
+"""
+input cart_item_bool_exp {
+  _and: [cart_item_bool_exp!]
+  _not: cart_item_bool_exp
+  _or: [cart_item_bool_exp!]
+  id: uuid_comparison_exp
+  product_id: uuid_comparison_exp
+  store_id: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "cart_item"
+"""
+enum cart_item_constraint {
+  """unique or primary key constraint"""
+  cart_pkey
+}
+
+"""
+input type for inserting data into table "cart_item"
+"""
+input cart_item_insert_input {
+  id: uuid
+  product_id: uuid
+  store_id: uuid
+}
+
+"""aggregate max on columns"""
+type cart_item_max_fields {
+  id: uuid
+  product_id: uuid
+  store_id: uuid
+}
+
+"""aggregate min on columns"""
+type cart_item_min_fields {
+  id: uuid
+  product_id: uuid
+  store_id: uuid
+}
+
+"""
+response of any mutation on the table "cart_item"
+"""
+type cart_item_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [cart_item!]!
+}
+
+"""
+on conflict condition type for table "cart_item"
+"""
+input cart_item_on_conflict {
+  constraint: cart_item_constraint!
+  update_columns: [cart_item_update_column!]! = []
+  where: cart_item_bool_exp
+}
+
+"""Ordering options when selecting data from "cart_item"."""
+input cart_item_order_by {
+  id: order_by
+  product_id: order_by
+  store_id: order_by
+}
+
+"""primary key columns input for table: cart_item"""
+input cart_item_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "cart_item"
+"""
+enum cart_item_select_column {
+  """column name"""
+  id
+
+  """column name"""
+  product_id
+
+  """column name"""
+  store_id
+}
+
+"""
+input type for updating data in table "cart_item"
+"""
+input cart_item_set_input {
+  id: uuid
+  product_id: uuid
+  store_id: uuid
+}
+
+"""
+update columns of table "cart_item"
+"""
+enum cart_item_update_column {
+  """column name"""
+  id
+
+  """column name"""
+  product_id
+
+  """column name"""
+  store_id
+}
+
+"""
+columns and relationships of "inventory"
+"""
+type inventory {
+  """An object relationship"""
+  product: product!
+  product_id: uuid!
+  stock_available: Int!
+
+  """An object relationship"""
+  store: store!
+  store_id: uuid!
+}
+
+"""
+aggregated selection of "inventory"
+"""
+type inventory_aggregate {
+  aggregate: inventory_aggregate_fields
+  nodes: [inventory!]!
+}
+
+"""
+aggregate fields of "inventory"
+"""
+type inventory_aggregate_fields {
+  avg: inventory_avg_fields
+  count(columns: [inventory_select_column!], distinct: Boolean): Int!
+  max: inventory_max_fields
+  min: inventory_min_fields
+  stddev: inventory_stddev_fields
+  stddev_pop: inventory_stddev_pop_fields
+  stddev_samp: inventory_stddev_samp_fields
+  sum: inventory_sum_fields
+  var_pop: inventory_var_pop_fields
+  var_samp: inventory_var_samp_fields
+  variance: inventory_variance_fields
+}
+
+"""
+order by aggregate values of table "inventory"
+"""
+input inventory_aggregate_order_by {
+  avg: inventory_avg_order_by
+  count: order_by
+  max: inventory_max_order_by
+  min: inventory_min_order_by
+  stddev: inventory_stddev_order_by
+  stddev_pop: inventory_stddev_pop_order_by
+  stddev_samp: inventory_stddev_samp_order_by
+  sum: inventory_sum_order_by
+  var_pop: inventory_var_pop_order_by
+  var_samp: inventory_var_samp_order_by
+  variance: inventory_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "inventory"
+"""
+input inventory_arr_rel_insert_input {
+  data: [inventory_insert_input!]!
+
+  """on conflict condition"""
+  on_conflict: inventory_on_conflict
+}
+
+"""aggregate avg on columns"""
+type inventory_avg_fields {
+  stock_available: Float
+}
+
+"""
+order by avg() on columns of table "inventory"
+"""
+input inventory_avg_order_by {
+  stock_available: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "inventory". All fields are combined with a logical 'AND'.
+"""
+input inventory_bool_exp {
+  _and: [inventory_bool_exp!]
+  _not: inventory_bool_exp
+  _or: [inventory_bool_exp!]
+  product: product_bool_exp
+  product_id: uuid_comparison_exp
+  stock_available: Int_comparison_exp
+  store: store_bool_exp
+  store_id: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "inventory"
+"""
+enum inventory_constraint {
+  """unique or primary key constraint"""
+  inventory_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "inventory"
+"""
+input inventory_inc_input {
+  stock_available: Int
+}
+
+"""
+input type for inserting data into table "inventory"
+"""
+input inventory_insert_input {
+  product: product_obj_rel_insert_input
+  product_id: uuid
+  stock_available: Int
+  store: store_obj_rel_insert_input
+  store_id: uuid
+}
+
+"""aggregate max on columns"""
+type inventory_max_fields {
+  product_id: uuid
+  stock_available: Int
+  store_id: uuid
+}
+
+"""
+order by max() on columns of table "inventory"
+"""
+input inventory_max_order_by {
+  product_id: order_by
+  stock_available: order_by
+  store_id: order_by
+}
+
+"""aggregate min on columns"""
+type inventory_min_fields {
+  product_id: uuid
+  stock_available: Int
+  store_id: uuid
+}
+
+"""
+order by min() on columns of table "inventory"
+"""
+input inventory_min_order_by {
+  product_id: order_by
+  stock_available: order_by
+  store_id: order_by
+}
+
+"""
+response of any mutation on the table "inventory"
+"""
+type inventory_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [inventory!]!
+}
+
+"""
+on conflict condition type for table "inventory"
+"""
+input inventory_on_conflict {
+  constraint: inventory_constraint!
+  update_columns: [inventory_update_column!]! = []
+  where: inventory_bool_exp
+}
+
+"""Ordering options when selecting data from "inventory"."""
+input inventory_order_by {
+  product: product_order_by
+  product_id: order_by
+  stock_available: order_by
+  store: store_order_by
+  store_id: order_by
+}
+
+"""primary key columns input for table: inventory"""
+input inventory_pk_columns_input {
+  product_id: uuid!
+  store_id: uuid!
+}
+
+"""
+select columns of table "inventory"
+"""
+enum inventory_select_column {
+  """column name"""
+  product_id
+
+  """column name"""
+  stock_available
+
+  """column name"""
+  store_id
+}
+
+"""
+input type for updating data in table "inventory"
+"""
+input inventory_set_input {
+  product_id: uuid
+  stock_available: Int
+  store_id: uuid
+}
+
+"""aggregate stddev on columns"""
+type inventory_stddev_fields {
+  stock_available: Float
+}
+
+"""
+order by stddev() on columns of table "inventory"
+"""
+input inventory_stddev_order_by {
+  stock_available: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type inventory_stddev_pop_fields {
+  stock_available: Float
+}
+
+"""
+order by stddev_pop() on columns of table "inventory"
+"""
+input inventory_stddev_pop_order_by {
+  stock_available: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type inventory_stddev_samp_fields {
+  stock_available: Float
+}
+
+"""
+order by stddev_samp() on columns of table "inventory"
+"""
+input inventory_stddev_samp_order_by {
+  stock_available: order_by
+}
+
+"""aggregate sum on columns"""
+type inventory_sum_fields {
+  stock_available: Int
+}
+
+"""
+order by sum() on columns of table "inventory"
+"""
+input inventory_sum_order_by {
+  stock_available: order_by
+}
+
+"""
+update columns of table "inventory"
+"""
+enum inventory_update_column {
+  """column name"""
+  product_id
+
+  """column name"""
+  stock_available
+
+  """column name"""
+  store_id
+}
+
+"""aggregate var_pop on columns"""
+type inventory_var_pop_fields {
+  stock_available: Float
+}
+
+"""
+order by var_pop() on columns of table "inventory"
+"""
+input inventory_var_pop_order_by {
+  stock_available: order_by
+}
+
+"""aggregate var_samp on columns"""
+type inventory_var_samp_fields {
+  stock_available: Float
+}
+
+"""
+order by var_samp() on columns of table "inventory"
+"""
+input inventory_var_samp_order_by {
+  stock_available: order_by
+}
+
+"""aggregate variance on columns"""
+type inventory_variance_fields {
+  stock_available: Float
+}
+
+"""
+order by variance() on columns of table "inventory"
+"""
+input inventory_variance_order_by {
+  stock_available: order_by
+}
+
+scalar jsonb
+
+scalar money
+
+"""
+Boolean expression to compare columns of type "money". All fields are combined with logical 'AND'.
+"""
+input money_comparison_exp {
+  _eq: money
+  _gt: money
+  _gte: money
+  _in: [money!]
+  _is_null: Boolean
+  _lt: money
+  _lte: money
+  _neq: money
+  _nin: [money!]
+}
+
 """mutation root"""
 type mutation_root {
-  actionName(arg1: SampleInput!): SampleOutput
-
   """
   delete data from the table: "block"
   """
@@ -381,6 +1090,45 @@ type mutation_root {
   delete_block_by_pk(id: uuid!): block
 
   """
+  delete data from the table: "brick"
+  """
+  delete_brick(
+    """filter the rows which have to be deleted"""
+    where: brick_bool_exp!
+  ): brick_mutation_response
+
+  """
+  delete single row from the table: "brick"
+  """
+  delete_brick_by_pk(id: uuid!): brick
+
+  """
+  delete data from the table: "cart_item"
+  """
+  delete_cart_item(
+    """filter the rows which have to be deleted"""
+    where: cart_item_bool_exp!
+  ): cart_item_mutation_response
+
+  """
+  delete single row from the table: "cart_item"
+  """
+  delete_cart_item_by_pk(id: uuid!): cart_item
+
+  """
+  delete data from the table: "inventory"
+  """
+  delete_inventory(
+    """filter the rows which have to be deleted"""
+    where: inventory_bool_exp!
+  ): inventory_mutation_response
+
+  """
+  delete single row from the table: "inventory"
+  """
+  delete_inventory_by_pk(product_id: uuid!, store_id: uuid!): inventory
+
+  """
   delete data from the table: "organization"
   """
   delete_organization(
@@ -392,6 +1140,32 @@ type mutation_root {
   delete single row from the table: "organization"
   """
   delete_organization_by_pk(id: Int!): organization
+
+  """
+  delete data from the table: "product"
+  """
+  delete_product(
+    """filter the rows which have to be deleted"""
+    where: product_bool_exp!
+  ): product_mutation_response
+
+  """
+  delete single row from the table: "product"
+  """
+  delete_product_by_pk(id: uuid!): product
+
+  """
+  delete data from the table: "store"
+  """
+  delete_store(
+    """filter the rows which have to be deleted"""
+    where: store_bool_exp!
+  ): store_mutation_response
+
+  """
+  delete single row from the table: "store"
+  """
+  delete_store_by_pk(id: uuid!): store
 
   """
   delete data from the table: "user_info"
@@ -429,6 +1203,72 @@ type mutation_root {
   ): block
 
   """
+  insert data into the table: "brick"
+  """
+  insert_brick(
+    """the rows to be inserted"""
+    objects: [brick_insert_input!]!
+
+    """on conflict condition"""
+    on_conflict: brick_on_conflict
+  ): brick_mutation_response
+
+  """
+  insert a single row into the table: "brick"
+  """
+  insert_brick_one(
+    """the row to be inserted"""
+    object: brick_insert_input!
+
+    """on conflict condition"""
+    on_conflict: brick_on_conflict
+  ): brick
+
+  """
+  insert data into the table: "cart_item"
+  """
+  insert_cart_item(
+    """the rows to be inserted"""
+    objects: [cart_item_insert_input!]!
+
+    """on conflict condition"""
+    on_conflict: cart_item_on_conflict
+  ): cart_item_mutation_response
+
+  """
+  insert a single row into the table: "cart_item"
+  """
+  insert_cart_item_one(
+    """the row to be inserted"""
+    object: cart_item_insert_input!
+
+    """on conflict condition"""
+    on_conflict: cart_item_on_conflict
+  ): cart_item
+
+  """
+  insert data into the table: "inventory"
+  """
+  insert_inventory(
+    """the rows to be inserted"""
+    objects: [inventory_insert_input!]!
+
+    """on conflict condition"""
+    on_conflict: inventory_on_conflict
+  ): inventory_mutation_response
+
+  """
+  insert a single row into the table: "inventory"
+  """
+  insert_inventory_one(
+    """the row to be inserted"""
+    object: inventory_insert_input!
+
+    """on conflict condition"""
+    on_conflict: inventory_on_conflict
+  ): inventory
+
+  """
   insert data into the table: "organization"
   """
   insert_organization(
@@ -449,6 +1289,50 @@ type mutation_root {
     """on conflict condition"""
     on_conflict: organization_on_conflict
   ): organization
+
+  """
+  insert data into the table: "product"
+  """
+  insert_product(
+    """the rows to be inserted"""
+    objects: [product_insert_input!]!
+
+    """on conflict condition"""
+    on_conflict: product_on_conflict
+  ): product_mutation_response
+
+  """
+  insert a single row into the table: "product"
+  """
+  insert_product_one(
+    """the row to be inserted"""
+    object: product_insert_input!
+
+    """on conflict condition"""
+    on_conflict: product_on_conflict
+  ): product
+
+  """
+  insert data into the table: "store"
+  """
+  insert_store(
+    """the rows to be inserted"""
+    objects: [store_insert_input!]!
+
+    """on conflict condition"""
+    on_conflict: store_on_conflict
+  ): store_mutation_response
+
+  """
+  insert a single row into the table: "store"
+  """
+  insert_store_one(
+    """the row to be inserted"""
+    object: store_insert_input!
+
+    """on conflict condition"""
+    on_conflict: store_on_conflict
+  ): store
 
   """
   insert data into the table: "user_info"
@@ -493,6 +1377,78 @@ type mutation_root {
   ): block
 
   """
+  update data of the table: "brick"
+  """
+  update_brick(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: brick_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: brick_set_input
+
+    """filter the rows which have to be updated"""
+    where: brick_bool_exp!
+  ): brick_mutation_response
+
+  """
+  update single row of the table: "brick"
+  """
+  update_brick_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: brick_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: brick_set_input
+    pk_columns: brick_pk_columns_input!
+  ): brick
+
+  """
+  update data of the table: "cart_item"
+  """
+  update_cart_item(
+    """sets the columns of the filtered rows to the given values"""
+    _set: cart_item_set_input
+
+    """filter the rows which have to be updated"""
+    where: cart_item_bool_exp!
+  ): cart_item_mutation_response
+
+  """
+  update single row of the table: "cart_item"
+  """
+  update_cart_item_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: cart_item_set_input
+    pk_columns: cart_item_pk_columns_input!
+  ): cart_item
+
+  """
+  update data of the table: "inventory"
+  """
+  update_inventory(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: inventory_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: inventory_set_input
+
+    """filter the rows which have to be updated"""
+    where: inventory_bool_exp!
+  ): inventory_mutation_response
+
+  """
+  update single row of the table: "inventory"
+  """
+  update_inventory_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: inventory_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: inventory_set_input
+    pk_columns: inventory_pk_columns_input!
+  ): inventory
+
+  """
   update data of the table: "organization"
   """
   update_organization(
@@ -517,6 +1473,52 @@ type mutation_root {
     _set: organization_set_input
     pk_columns: organization_pk_columns_input!
   ): organization
+
+  """
+  update data of the table: "product"
+  """
+  update_product(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: product_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: product_set_input
+
+    """filter the rows which have to be updated"""
+    where: product_bool_exp!
+  ): product_mutation_response
+
+  """
+  update single row of the table: "product"
+  """
+  update_product_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: product_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: product_set_input
+    pk_columns: product_pk_columns_input!
+  ): product
+
+  """
+  update data of the table: "store"
+  """
+  update_store(
+    """sets the columns of the filtered rows to the given values"""
+    _set: store_set_input
+
+    """filter the rows which have to be updated"""
+    where: store_bool_exp!
+  ): store_mutation_response
+
+  """
+  update single row of the table: "store"
+  """
+  update_store_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: store_set_input
+    pk_columns: store_pk_columns_input!
+  ): store
 
   """
   update data of the table: "user_info"
@@ -796,6 +1798,248 @@ type organization_variance_fields {
   parent: Float
 }
 
+"""
+columns and relationships of "product"
+"""
+type product {
+  id: uuid!
+  name: String
+  price: money
+
+  """An array relationship"""
+  product_inventory(
+    """distinct select on columns"""
+    distinct_on: [inventory_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [inventory_order_by!]
+
+    """filter the rows returned"""
+    where: inventory_bool_exp
+  ): [inventory!]!
+
+  """An aggregate relationship"""
+  product_inventory_aggregate(
+    """distinct select on columns"""
+    distinct_on: [inventory_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [inventory_order_by!]
+
+    """filter the rows returned"""
+    where: inventory_bool_exp
+  ): inventory_aggregate!
+}
+
+"""
+aggregated selection of "product"
+"""
+type product_aggregate {
+  aggregate: product_aggregate_fields
+  nodes: [product!]!
+}
+
+"""
+aggregate fields of "product"
+"""
+type product_aggregate_fields {
+  avg: product_avg_fields
+  count(columns: [product_select_column!], distinct: Boolean): Int!
+  max: product_max_fields
+  min: product_min_fields
+  stddev: product_stddev_fields
+  stddev_pop: product_stddev_pop_fields
+  stddev_samp: product_stddev_samp_fields
+  sum: product_sum_fields
+  var_pop: product_var_pop_fields
+  var_samp: product_var_samp_fields
+  variance: product_variance_fields
+}
+
+"""aggregate avg on columns"""
+type product_avg_fields {
+  price: Float
+}
+
+"""
+Boolean expression to filter rows from the table "product". All fields are combined with a logical 'AND'.
+"""
+input product_bool_exp {
+  _and: [product_bool_exp!]
+  _not: product_bool_exp
+  _or: [product_bool_exp!]
+  id: uuid_comparison_exp
+  name: String_comparison_exp
+  price: money_comparison_exp
+  product_inventory: inventory_bool_exp
+}
+
+"""
+unique or primary key constraints on table "product"
+"""
+enum product_constraint {
+  """unique or primary key constraint"""
+  product_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "product"
+"""
+input product_inc_input {
+  price: money
+}
+
+"""
+input type for inserting data into table "product"
+"""
+input product_insert_input {
+  id: uuid
+  name: String
+  price: money
+  product_inventory: inventory_arr_rel_insert_input
+}
+
+"""aggregate max on columns"""
+type product_max_fields {
+  id: uuid
+  name: String
+  price: money
+}
+
+"""aggregate min on columns"""
+type product_min_fields {
+  id: uuid
+  name: String
+  price: money
+}
+
+"""
+response of any mutation on the table "product"
+"""
+type product_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [product!]!
+}
+
+"""
+input type for inserting object relation for remote table "product"
+"""
+input product_obj_rel_insert_input {
+  data: product_insert_input!
+
+  """on conflict condition"""
+  on_conflict: product_on_conflict
+}
+
+"""
+on conflict condition type for table "product"
+"""
+input product_on_conflict {
+  constraint: product_constraint!
+  update_columns: [product_update_column!]! = []
+  where: product_bool_exp
+}
+
+"""Ordering options when selecting data from "product"."""
+input product_order_by {
+  id: order_by
+  name: order_by
+  price: order_by
+  product_inventory_aggregate: inventory_aggregate_order_by
+}
+
+"""primary key columns input for table: product"""
+input product_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "product"
+"""
+enum product_select_column {
+  """column name"""
+  id
+
+  """column name"""
+  name
+
+  """column name"""
+  price
+}
+
+"""
+input type for updating data in table "product"
+"""
+input product_set_input {
+  id: uuid
+  name: String
+  price: money
+}
+
+"""aggregate stddev on columns"""
+type product_stddev_fields {
+  price: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type product_stddev_pop_fields {
+  price: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type product_stddev_samp_fields {
+  price: Float
+}
+
+"""aggregate sum on columns"""
+type product_sum_fields {
+  price: money
+}
+
+"""
+update columns of table "product"
+"""
+enum product_update_column {
+  """column name"""
+  id
+
+  """column name"""
+  name
+
+  """column name"""
+  price
+}
+
+"""aggregate var_pop on columns"""
+type product_var_pop_fields {
+  price: Float
+}
+
+"""aggregate var_samp on columns"""
+type product_var_samp_fields {
+  price: Float
+}
+
+"""aggregate variance on columns"""
+type product_variance_fields {
+  price: Float
+}
+
 type query_root {
   """
   fetch data from the table: "block"
@@ -839,6 +2083,135 @@ type query_root {
 
   """fetch data from the table: "block" using primary key columns"""
   block_by_pk(id: uuid!): block
+
+  """
+  fetch data from the table: "brick"
+  """
+  brick(
+    """distinct select on columns"""
+    distinct_on: [brick_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [brick_order_by!]
+
+    """filter the rows returned"""
+    where: brick_bool_exp
+  ): [brick!]!
+
+  """
+  fetch aggregated fields from the table: "brick"
+  """
+  brick_aggregate(
+    """distinct select on columns"""
+    distinct_on: [brick_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [brick_order_by!]
+
+    """filter the rows returned"""
+    where: brick_bool_exp
+  ): brick_aggregate!
+
+  """fetch data from the table: "brick" using primary key columns"""
+  brick_by_pk(id: uuid!): brick
+
+  """
+  fetch data from the table: "cart_item"
+  """
+  cart_item(
+    """distinct select on columns"""
+    distinct_on: [cart_item_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [cart_item_order_by!]
+
+    """filter the rows returned"""
+    where: cart_item_bool_exp
+  ): [cart_item!]!
+
+  """
+  fetch aggregated fields from the table: "cart_item"
+  """
+  cart_item_aggregate(
+    """distinct select on columns"""
+    distinct_on: [cart_item_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [cart_item_order_by!]
+
+    """filter the rows returned"""
+    where: cart_item_bool_exp
+  ): cart_item_aggregate!
+
+  """fetch data from the table: "cart_item" using primary key columns"""
+  cart_item_by_pk(id: uuid!): cart_item
+
+  """
+  fetch data from the table: "inventory"
+  """
+  inventory(
+    """distinct select on columns"""
+    distinct_on: [inventory_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [inventory_order_by!]
+
+    """filter the rows returned"""
+    where: inventory_bool_exp
+  ): [inventory!]!
+
+  """
+  fetch aggregated fields from the table: "inventory"
+  """
+  inventory_aggregate(
+    """distinct select on columns"""
+    distinct_on: [inventory_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [inventory_order_by!]
+
+    """filter the rows returned"""
+    where: inventory_bool_exp
+  ): inventory_aggregate!
+
+  """fetch data from the table: "inventory" using primary key columns"""
+  inventory_by_pk(product_id: uuid!, store_id: uuid!): inventory
 
   """
   fetch data from the table: "organization"
@@ -934,6 +2307,93 @@ type query_root {
   ): user_info_aggregate!
 
   """
+  fetch data from the table: "product"
+  """
+  product(
+    """distinct select on columns"""
+    distinct_on: [product_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [product_order_by!]
+
+    """filter the rows returned"""
+    where: product_bool_exp
+  ): [product!]!
+
+  """
+  fetch aggregated fields from the table: "product"
+  """
+  product_aggregate(
+    """distinct select on columns"""
+    distinct_on: [product_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [product_order_by!]
+
+    """filter the rows returned"""
+    where: product_bool_exp
+  ): product_aggregate!
+
+  """fetch data from the table: "product" using primary key columns"""
+  product_by_pk(id: uuid!): product
+  resolveFirestoreData(arg1: ResolveFirestoreDataInput!): ResolveFirestoreDataOutput
+
+  """
+  fetch data from the table: "store"
+  """
+  store(
+    """distinct select on columns"""
+    distinct_on: [store_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [store_order_by!]
+
+    """filter the rows returned"""
+    where: store_bool_exp
+  ): [store!]!
+
+  """
+  fetch aggregated fields from the table: "store"
+  """
+  store_aggregate(
+    """distinct select on columns"""
+    distinct_on: [store_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [store_order_by!]
+
+    """filter the rows returned"""
+    where: store_bool_exp
+  ): store_aggregate!
+
+  """fetch data from the table: "store" using primary key columns"""
+  store_by_pk(id: uuid!): store
+
+  """
   fetch data from the table: "user_info"
   """
   user_info(
@@ -975,6 +2435,206 @@ type query_root {
 
   """fetch data from the table: "user_info" using primary key columns"""
   user_info_by_pk(id: Int!): user_info
+}
+
+"""
+columns and relationships of "store"
+"""
+type store {
+  address: String
+  created_at: timestamptz!
+  id: uuid!
+  name: String
+
+  """An array relationship"""
+  store_inventory(
+    """distinct select on columns"""
+    distinct_on: [inventory_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [inventory_order_by!]
+
+    """filter the rows returned"""
+    where: inventory_bool_exp
+  ): [inventory!]!
+
+  """An aggregate relationship"""
+  store_inventory_aggregate(
+    """distinct select on columns"""
+    distinct_on: [inventory_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [inventory_order_by!]
+
+    """filter the rows returned"""
+    where: inventory_bool_exp
+  ): inventory_aggregate!
+}
+
+"""
+aggregated selection of "store"
+"""
+type store_aggregate {
+  aggregate: store_aggregate_fields
+  nodes: [store!]!
+}
+
+"""
+aggregate fields of "store"
+"""
+type store_aggregate_fields {
+  count(columns: [store_select_column!], distinct: Boolean): Int!
+  max: store_max_fields
+  min: store_min_fields
+}
+
+"""
+Boolean expression to filter rows from the table "store". All fields are combined with a logical 'AND'.
+"""
+input store_bool_exp {
+  _and: [store_bool_exp!]
+  _not: store_bool_exp
+  _or: [store_bool_exp!]
+  address: String_comparison_exp
+  created_at: timestamptz_comparison_exp
+  id: uuid_comparison_exp
+  name: String_comparison_exp
+  store_inventory: inventory_bool_exp
+}
+
+"""
+unique or primary key constraints on table "store"
+"""
+enum store_constraint {
+  """unique or primary key constraint"""
+  store_pkey
+}
+
+"""
+input type for inserting data into table "store"
+"""
+input store_insert_input {
+  address: String
+  created_at: timestamptz
+  id: uuid
+  name: String
+  store_inventory: inventory_arr_rel_insert_input
+}
+
+"""aggregate max on columns"""
+type store_max_fields {
+  address: String
+  created_at: timestamptz
+  id: uuid
+  name: String
+}
+
+"""aggregate min on columns"""
+type store_min_fields {
+  address: String
+  created_at: timestamptz
+  id: uuid
+  name: String
+}
+
+"""
+response of any mutation on the table "store"
+"""
+type store_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [store!]!
+}
+
+"""
+input type for inserting object relation for remote table "store"
+"""
+input store_obj_rel_insert_input {
+  data: store_insert_input!
+
+  """on conflict condition"""
+  on_conflict: store_on_conflict
+}
+
+"""
+on conflict condition type for table "store"
+"""
+input store_on_conflict {
+  constraint: store_constraint!
+  update_columns: [store_update_column!]! = []
+  where: store_bool_exp
+}
+
+"""Ordering options when selecting data from "store"."""
+input store_order_by {
+  address: order_by
+  created_at: order_by
+  id: order_by
+  name: order_by
+  store_inventory_aggregate: inventory_aggregate_order_by
+}
+
+"""primary key columns input for table: store"""
+input store_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "store"
+"""
+enum store_select_column {
+  """column name"""
+  address
+
+  """column name"""
+  created_at
+
+  """column name"""
+  id
+
+  """column name"""
+  name
+}
+
+"""
+input type for updating data in table "store"
+"""
+input store_set_input {
+  address: String
+  created_at: timestamptz
+  id: uuid
+  name: String
+}
+
+"""
+update columns of table "store"
+"""
+enum store_update_column {
+  """column name"""
+  address
+
+  """column name"""
+  created_at
+
+  """column name"""
+  id
+
+  """column name"""
+  name
 }
 
 type subscription_root {
@@ -1022,6 +2682,135 @@ type subscription_root {
   block_by_pk(id: uuid!): block
 
   """
+  fetch data from the table: "brick"
+  """
+  brick(
+    """distinct select on columns"""
+    distinct_on: [brick_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [brick_order_by!]
+
+    """filter the rows returned"""
+    where: brick_bool_exp
+  ): [brick!]!
+
+  """
+  fetch aggregated fields from the table: "brick"
+  """
+  brick_aggregate(
+    """distinct select on columns"""
+    distinct_on: [brick_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [brick_order_by!]
+
+    """filter the rows returned"""
+    where: brick_bool_exp
+  ): brick_aggregate!
+
+  """fetch data from the table: "brick" using primary key columns"""
+  brick_by_pk(id: uuid!): brick
+
+  """
+  fetch data from the table: "cart_item"
+  """
+  cart_item(
+    """distinct select on columns"""
+    distinct_on: [cart_item_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [cart_item_order_by!]
+
+    """filter the rows returned"""
+    where: cart_item_bool_exp
+  ): [cart_item!]!
+
+  """
+  fetch aggregated fields from the table: "cart_item"
+  """
+  cart_item_aggregate(
+    """distinct select on columns"""
+    distinct_on: [cart_item_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [cart_item_order_by!]
+
+    """filter the rows returned"""
+    where: cart_item_bool_exp
+  ): cart_item_aggregate!
+
+  """fetch data from the table: "cart_item" using primary key columns"""
+  cart_item_by_pk(id: uuid!): cart_item
+
+  """
+  fetch data from the table: "inventory"
+  """
+  inventory(
+    """distinct select on columns"""
+    distinct_on: [inventory_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [inventory_order_by!]
+
+    """filter the rows returned"""
+    where: inventory_bool_exp
+  ): [inventory!]!
+
+  """
+  fetch aggregated fields from the table: "inventory"
+  """
+  inventory_aggregate(
+    """distinct select on columns"""
+    distinct_on: [inventory_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [inventory_order_by!]
+
+    """filter the rows returned"""
+    where: inventory_bool_exp
+  ): inventory_aggregate!
+
+  """fetch data from the table: "inventory" using primary key columns"""
+  inventory_by_pk(product_id: uuid!, store_id: uuid!): inventory
+
+  """
   fetch data from the table: "organization"
   """
   organization(
@@ -1113,6 +2902,92 @@ type subscription_root {
     """filter the rows returned"""
     where: user_info_bool_exp
   ): user_info_aggregate!
+
+  """
+  fetch data from the table: "product"
+  """
+  product(
+    """distinct select on columns"""
+    distinct_on: [product_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [product_order_by!]
+
+    """filter the rows returned"""
+    where: product_bool_exp
+  ): [product!]!
+
+  """
+  fetch aggregated fields from the table: "product"
+  """
+  product_aggregate(
+    """distinct select on columns"""
+    distinct_on: [product_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [product_order_by!]
+
+    """filter the rows returned"""
+    where: product_bool_exp
+  ): product_aggregate!
+
+  """fetch data from the table: "product" using primary key columns"""
+  product_by_pk(id: uuid!): product
+
+  """
+  fetch data from the table: "store"
+  """
+  store(
+    """distinct select on columns"""
+    distinct_on: [store_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [store_order_by!]
+
+    """filter the rows returned"""
+    where: store_bool_exp
+  ): [store!]!
+
+  """
+  fetch aggregated fields from the table: "store"
+  """
+  store_aggregate(
+    """distinct select on columns"""
+    distinct_on: [store_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [store_order_by!]
+
+    """filter the rows returned"""
+    where: store_bool_exp
+  ): store_aggregate!
+
+  """fetch data from the table: "store" using primary key columns"""
+  store_by_pk(id: uuid!): store
 
   """
   fetch data from the table: "user_info"
