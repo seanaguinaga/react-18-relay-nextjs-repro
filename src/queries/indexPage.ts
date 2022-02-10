@@ -2,13 +2,17 @@ import { graphql } from "react-relay";
 
 export default graphql`
   query indexPage_indexQuery {
-    brick {
-      id
-      int_id
-      created_at
-      updated_at
-      name
-      ...BrickValueItem_brick
+    brick_connection {
+      edges {
+        node {
+          created_at
+          id
+          int_id
+          name
+          updated_at
+          ...BrickValueItem_brick
+        }
+      }
     }
   }
 `;

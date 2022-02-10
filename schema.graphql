@@ -28,14 +28,17 @@ input Int_comparison_exp {
   _nin: [Int!]
 }
 
-input ResolveFirestoreDataInput {
-  document_path: String!
+"""An object with globally unique ID"""
+interface Node {
+  """A globally unique identifier"""
+  id: ID!
 }
 
-type ResolveFirestoreDataOutput {
-  """An object relationship"""
-  Yes: block!
-  firestore_data: jsonb!
+type PageInfo {
+  endCursor: String!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String!
 }
 
 """
@@ -94,7 +97,7 @@ input String_comparison_exp {
 """
 columns and relationships of "block"
 """
-type block {
+type block implements Node {
   """An array relationship"""
   blocks(
     """distinct select on columns"""
@@ -130,14 +133,44 @@ type block {
     """filter the rows returned"""
     where: block_bool_exp
   ): block_aggregate!
+
+  """An array relationship connection"""
+  blocks_connection(
+    after: String
+    before: String
+
+    """distinct select on columns"""
+    distinct_on: [block_select_column!]
+    first: Int
+    last: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [block_order_by!]
+
+    """filter the rows returned"""
+    where: block_bool_exp
+  ): blockConnection!
   created_at: timestamptz!
   document_path: String
-  id: uuid!
+  id: ID!
   kind: String!
   parent_id: uuid
   post_id: uuid
   updated_at: timestamptz!
   value: String!
+}
+
+"""
+A Relay connection object on "block"
+"""
+type blockConnection {
+  edges: [blockEdge!]!
+  pageInfo: PageInfo!
+}
+
+type blockEdge {
+  cursor: String!
+  node: block!
 }
 
 """
@@ -382,9 +415,9 @@ enum block_update_column {
 """
 columns and relationships of "brick"
 """
-type brick {
+type brick implements Node {
   created_at: timestamptz!
-  id: uuid!
+  id: ID!
   int_id: Int!
   name: String!
   updated_at: timestamptz!
@@ -392,33 +425,16 @@ type brick {
 }
 
 """
-aggregated selection of "brick"
+A Relay connection object on "brick"
 """
-type brick_aggregate {
-  aggregate: brick_aggregate_fields
-  nodes: [brick!]!
+type brickConnection {
+  edges: [brickEdge!]!
+  pageInfo: PageInfo!
 }
 
-"""
-aggregate fields of "brick"
-"""
-type brick_aggregate_fields {
-  avg: brick_avg_fields
-  count(columns: [brick_select_column!], distinct: Boolean): Int!
-  max: brick_max_fields
-  min: brick_min_fields
-  stddev: brick_stddev_fields
-  stddev_pop: brick_stddev_pop_fields
-  stddev_samp: brick_stddev_samp_fields
-  sum: brick_sum_fields
-  var_pop: brick_var_pop_fields
-  var_samp: brick_var_samp_fields
-  variance: brick_variance_fields
-}
-
-"""aggregate avg on columns"""
-type brick_avg_fields {
-  int_id: Float
+type brickEdge {
+  cursor: String!
+  node: brick!
 }
 
 """
@@ -455,26 +471,6 @@ input brick_inc_input {
 input type for inserting data into table "brick"
 """
 input brick_insert_input {
-  created_at: timestamptz
-  id: uuid
-  int_id: Int
-  name: String
-  updated_at: timestamptz
-  value: String
-}
-
-"""aggregate max on columns"""
-type brick_max_fields {
-  created_at: timestamptz
-  id: uuid
-  int_id: Int
-  name: String
-  updated_at: timestamptz
-  value: String
-}
-
-"""aggregate min on columns"""
-type brick_min_fields {
   created_at: timestamptz
   id: uuid
   int_id: Int
@@ -553,26 +549,6 @@ input brick_set_input {
   value: String
 }
 
-"""aggregate stddev on columns"""
-type brick_stddev_fields {
-  int_id: Float
-}
-
-"""aggregate stddev_pop on columns"""
-type brick_stddev_pop_fields {
-  int_id: Float
-}
-
-"""aggregate stddev_samp on columns"""
-type brick_stddev_samp_fields {
-  int_id: Float
-}
-
-"""aggregate sum on columns"""
-type brick_sum_fields {
-  int_id: Int
-}
-
 """
 update columns of table "brick"
 """
@@ -596,45 +572,26 @@ enum brick_update_column {
   value
 }
 
-"""aggregate var_pop on columns"""
-type brick_var_pop_fields {
-  int_id: Float
-}
-
-"""aggregate var_samp on columns"""
-type brick_var_samp_fields {
-  int_id: Float
-}
-
-"""aggregate variance on columns"""
-type brick_variance_fields {
-  int_id: Float
-}
-
 """
 columns and relationships of "cart_item"
 """
-type cart_item {
-  id: uuid!
+type cart_item implements Node {
+  id: ID!
   product_id: uuid!
   store_id: uuid!
 }
 
 """
-aggregated selection of "cart_item"
+A Relay connection object on "cart_item"
 """
-type cart_item_aggregate {
-  aggregate: cart_item_aggregate_fields
-  nodes: [cart_item!]!
+type cart_itemConnection {
+  edges: [cart_itemEdge!]!
+  pageInfo: PageInfo!
 }
 
-"""
-aggregate fields of "cart_item"
-"""
-type cart_item_aggregate_fields {
-  count(columns: [cart_item_select_column!], distinct: Boolean): Int!
-  max: cart_item_max_fields
-  min: cart_item_min_fields
+type cart_itemEdge {
+  cursor: String!
+  node: cart_item!
 }
 
 """
@@ -661,20 +618,6 @@ enum cart_item_constraint {
 input type for inserting data into table "cart_item"
 """
 input cart_item_insert_input {
-  id: uuid
-  product_id: uuid
-  store_id: uuid
-}
-
-"""aggregate max on columns"""
-type cart_item_max_fields {
-  id: uuid
-  product_id: uuid
-  store_id: uuid
-}
-
-"""aggregate min on columns"""
-type cart_item_min_fields {
   id: uuid
   product_id: uuid
   store_id: uuid
@@ -752,7 +695,9 @@ enum cart_item_update_column {
 """
 columns and relationships of "inventory"
 """
-type inventory {
+type inventory implements Node {
+  id: ID!
+
   """An object relationship"""
   product: product!
   product_id: uuid!
@@ -761,6 +706,19 @@ type inventory {
   """An object relationship"""
   store: store!
   store_id: uuid!
+}
+
+"""
+A Relay connection object on "inventory"
+"""
+type inventoryConnection {
+  edges: [inventoryEdge!]!
+  pageInfo: PageInfo!
+}
+
+type inventoryEdge {
+  cursor: String!
+  node: inventory!
 }
 
 """
@@ -1054,8 +1012,6 @@ order by variance() on columns of table "inventory"
 input inventory_variance_order_by {
   stock_available: order_by
 }
-
-scalar jsonb
 
 scalar money
 
@@ -1571,8 +1527,8 @@ enum order_by {
 """
 columns and relationships of "organization"
 """
-type organization {
-  id: Int!
+type organization implements Node {
+  id: ID!
   organization: String!
 
   """
@@ -1598,34 +1554,16 @@ type organization {
 }
 
 """
-aggregated selection of "organization"
+A Relay connection object on "organization"
 """
-type organization_aggregate {
-  aggregate: organization_aggregate_fields
-  nodes: [organization!]!
+type organizationConnection {
+  edges: [organizationEdge!]!
+  pageInfo: PageInfo!
 }
 
-"""
-aggregate fields of "organization"
-"""
-type organization_aggregate_fields {
-  avg: organization_avg_fields
-  count(columns: [organization_select_column!], distinct: Boolean): Int!
-  max: organization_max_fields
-  min: organization_min_fields
-  stddev: organization_stddev_fields
-  stddev_pop: organization_stddev_pop_fields
-  stddev_samp: organization_stddev_samp_fields
-  sum: organization_sum_fields
-  var_pop: organization_var_pop_fields
-  var_samp: organization_var_samp_fields
-  variance: organization_variance_fields
-}
-
-"""aggregate avg on columns"""
-type organization_avg_fields {
-  id: Float
-  parent: Float
+type organizationEdge {
+  cursor: String!
+  node: organization!
 }
 
 """
@@ -1665,20 +1603,6 @@ input organization_inc_input {
 input type for inserting data into table "organization"
 """
 input organization_insert_input {
-  id: Int
-  organization: String
-  parent: Int
-}
-
-"""aggregate max on columns"""
-type organization_max_fields {
-  id: Int
-  organization: String
-  parent: Int
-}
-
-"""aggregate min on columns"""
-type organization_min_fields {
   id: Int
   organization: String
   parent: Int
@@ -1742,30 +1666,6 @@ input organization_set_input {
   parent: Int
 }
 
-"""aggregate stddev on columns"""
-type organization_stddev_fields {
-  id: Float
-  parent: Float
-}
-
-"""aggregate stddev_pop on columns"""
-type organization_stddev_pop_fields {
-  id: Float
-  parent: Float
-}
-
-"""aggregate stddev_samp on columns"""
-type organization_stddev_samp_fields {
-  id: Float
-  parent: Float
-}
-
-"""aggregate sum on columns"""
-type organization_sum_fields {
-  id: Int
-  parent: Int
-}
-
 """
 update columns of table "organization"
 """
@@ -1780,29 +1680,11 @@ enum organization_update_column {
   parent
 }
 
-"""aggregate var_pop on columns"""
-type organization_var_pop_fields {
-  id: Float
-  parent: Float
-}
-
-"""aggregate var_samp on columns"""
-type organization_var_samp_fields {
-  id: Float
-  parent: Float
-}
-
-"""aggregate variance on columns"""
-type organization_variance_fields {
-  id: Float
-  parent: Float
-}
-
 """
 columns and relationships of "product"
 """
-type product {
-  id: uuid!
+type product implements Node {
+  id: ID!
   name: String
   price: money
 
@@ -1841,36 +1723,36 @@ type product {
     """filter the rows returned"""
     where: inventory_bool_exp
   ): inventory_aggregate!
+
+  """An array relationship connection"""
+  product_inventory_connection(
+    after: String
+    before: String
+
+    """distinct select on columns"""
+    distinct_on: [inventory_select_column!]
+    first: Int
+    last: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [inventory_order_by!]
+
+    """filter the rows returned"""
+    where: inventory_bool_exp
+  ): inventoryConnection!
 }
 
 """
-aggregated selection of "product"
+A Relay connection object on "product"
 """
-type product_aggregate {
-  aggregate: product_aggregate_fields
-  nodes: [product!]!
+type productConnection {
+  edges: [productEdge!]!
+  pageInfo: PageInfo!
 }
 
-"""
-aggregate fields of "product"
-"""
-type product_aggregate_fields {
-  avg: product_avg_fields
-  count(columns: [product_select_column!], distinct: Boolean): Int!
-  max: product_max_fields
-  min: product_min_fields
-  stddev: product_stddev_fields
-  stddev_pop: product_stddev_pop_fields
-  stddev_samp: product_stddev_samp_fields
-  sum: product_sum_fields
-  var_pop: product_var_pop_fields
-  var_samp: product_var_samp_fields
-  variance: product_variance_fields
-}
-
-"""aggregate avg on columns"""
-type product_avg_fields {
-  price: Float
+type productEdge {
+  cursor: String!
+  node: product!
 }
 
 """
@@ -1909,20 +1791,6 @@ input product_insert_input {
   name: String
   price: money
   product_inventory: inventory_arr_rel_insert_input
-}
-
-"""aggregate max on columns"""
-type product_max_fields {
-  id: uuid
-  name: String
-  price: money
-}
-
-"""aggregate min on columns"""
-type product_min_fields {
-  id: uuid
-  name: String
-  price: money
 }
 
 """
@@ -1991,26 +1859,6 @@ input product_set_input {
   price: money
 }
 
-"""aggregate stddev on columns"""
-type product_stddev_fields {
-  price: Float
-}
-
-"""aggregate stddev_pop on columns"""
-type product_stddev_pop_fields {
-  price: Float
-}
-
-"""aggregate stddev_samp on columns"""
-type product_stddev_samp_fields {
-  price: Float
-}
-
-"""aggregate sum on columns"""
-type product_sum_fields {
-  price: money
-}
-
 """
 update columns of table "product"
 """
@@ -2025,425 +1873,195 @@ enum product_update_column {
   price
 }
 
-"""aggregate var_pop on columns"""
-type product_var_pop_fields {
-  price: Float
-}
-
-"""aggregate var_samp on columns"""
-type product_var_samp_fields {
-  price: Float
-}
-
-"""aggregate variance on columns"""
-type product_variance_fields {
-  price: Float
-}
-
 type query_root {
   """
   fetch data from the table: "block"
   """
-  block(
+  block_connection(
+    after: String
+    before: String
+
     """distinct select on columns"""
     distinct_on: [block_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [block_order_by!]
 
     """filter the rows returned"""
     where: block_bool_exp
-  ): [block!]!
-
-  """
-  fetch aggregated fields from the table: "block"
-  """
-  block_aggregate(
-    """distinct select on columns"""
-    distinct_on: [block_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [block_order_by!]
-
-    """filter the rows returned"""
-    where: block_bool_exp
-  ): block_aggregate!
-
-  """fetch data from the table: "block" using primary key columns"""
-  block_by_pk(id: uuid!): block
+  ): blockConnection!
 
   """
   fetch data from the table: "brick"
   """
-  brick(
+  brick_connection(
+    after: String
+    before: String
+
     """distinct select on columns"""
     distinct_on: [brick_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [brick_order_by!]
 
     """filter the rows returned"""
     where: brick_bool_exp
-  ): [brick!]!
-
-  """
-  fetch aggregated fields from the table: "brick"
-  """
-  brick_aggregate(
-    """distinct select on columns"""
-    distinct_on: [brick_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [brick_order_by!]
-
-    """filter the rows returned"""
-    where: brick_bool_exp
-  ): brick_aggregate!
-
-  """fetch data from the table: "brick" using primary key columns"""
-  brick_by_pk(id: uuid!): brick
+  ): brickConnection!
 
   """
   fetch data from the table: "cart_item"
   """
-  cart_item(
+  cart_item_connection(
+    after: String
+    before: String
+
     """distinct select on columns"""
     distinct_on: [cart_item_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [cart_item_order_by!]
 
     """filter the rows returned"""
     where: cart_item_bool_exp
-  ): [cart_item!]!
-
-  """
-  fetch aggregated fields from the table: "cart_item"
-  """
-  cart_item_aggregate(
-    """distinct select on columns"""
-    distinct_on: [cart_item_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [cart_item_order_by!]
-
-    """filter the rows returned"""
-    where: cart_item_bool_exp
-  ): cart_item_aggregate!
-
-  """fetch data from the table: "cart_item" using primary key columns"""
-  cart_item_by_pk(id: uuid!): cart_item
+  ): cart_itemConnection!
 
   """
   fetch data from the table: "inventory"
   """
-  inventory(
+  inventory_connection(
+    after: String
+    before: String
+
     """distinct select on columns"""
     distinct_on: [inventory_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [inventory_order_by!]
 
     """filter the rows returned"""
     where: inventory_bool_exp
-  ): [inventory!]!
-
-  """
-  fetch aggregated fields from the table: "inventory"
-  """
-  inventory_aggregate(
-    """distinct select on columns"""
-    distinct_on: [inventory_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [inventory_order_by!]
-
-    """filter the rows returned"""
-    where: inventory_bool_exp
-  ): inventory_aggregate!
-
-  """fetch data from the table: "inventory" using primary key columns"""
-  inventory_by_pk(product_id: uuid!, store_id: uuid!): inventory
+  ): inventoryConnection!
+  node(
+    """A globally unique id"""
+    id: ID!
+  ): Node
 
   """
   fetch data from the table: "organization"
   """
-  organization(
+  organization_connection(
+    after: String
+    before: String
+
     """distinct select on columns"""
     distinct_on: [organization_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [organization_order_by!]
 
     """filter the rows returned"""
     where: organization_bool_exp
-  ): [organization!]!
-
-  """
-  fetch aggregated fields from the table: "organization"
-  """
-  organization_aggregate(
-    """distinct select on columns"""
-    distinct_on: [organization_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [organization_order_by!]
-
-    """filter the rows returned"""
-    where: organization_bool_exp
-  ): organization_aggregate!
-
-  """fetch data from the table: "organization" using primary key columns"""
-  organization_by_pk(id: Int!): organization
+  ): organizationConnection!
 
   """
   execute function "organization_descendant_users" which returns "user_info"
   """
-  organization_descendant_users(
+  organization_descendant_users_connection(
+    after: String
+
     """
     input parameters for function "organization_descendant_users"
     """
     args: organization_descendant_users_args!
+    before: String
 
     """distinct select on columns"""
     distinct_on: [user_info_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [user_info_order_by!]
 
     """filter the rows returned"""
     where: user_info_bool_exp
-  ): [user_info!]!
-
-  """
-  execute function "organization_descendant_users" and query aggregates on result of table type "user_info"
-  """
-  organization_descendant_users_aggregate(
-    """
-    input parameters for function "organization_descendant_users_aggregate"
-    """
-    args: organization_descendant_users_args!
-
-    """distinct select on columns"""
-    distinct_on: [user_info_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [user_info_order_by!]
-
-    """filter the rows returned"""
-    where: user_info_bool_exp
-  ): user_info_aggregate!
+  ): user_infoConnection!
 
   """
   fetch data from the table: "product"
   """
-  product(
+  product_connection(
+    after: String
+    before: String
+
     """distinct select on columns"""
     distinct_on: [product_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [product_order_by!]
 
     """filter the rows returned"""
     where: product_bool_exp
-  ): [product!]!
-
-  """
-  fetch aggregated fields from the table: "product"
-  """
-  product_aggregate(
-    """distinct select on columns"""
-    distinct_on: [product_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [product_order_by!]
-
-    """filter the rows returned"""
-    where: product_bool_exp
-  ): product_aggregate!
-
-  """fetch data from the table: "product" using primary key columns"""
-  product_by_pk(id: uuid!): product
-  resolveFirestoreData(arg1: ResolveFirestoreDataInput!): ResolveFirestoreDataOutput
+  ): productConnection!
 
   """
   fetch data from the table: "store"
   """
-  store(
+  store_connection(
+    after: String
+    before: String
+
     """distinct select on columns"""
     distinct_on: [store_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [store_order_by!]
 
     """filter the rows returned"""
     where: store_bool_exp
-  ): [store!]!
-
-  """
-  fetch aggregated fields from the table: "store"
-  """
-  store_aggregate(
-    """distinct select on columns"""
-    distinct_on: [store_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [store_order_by!]
-
-    """filter the rows returned"""
-    where: store_bool_exp
-  ): store_aggregate!
-
-  """fetch data from the table: "store" using primary key columns"""
-  store_by_pk(id: uuid!): store
+  ): storeConnection!
 
   """
   fetch data from the table: "user_info"
   """
-  user_info(
+  user_info_connection(
+    after: String
+    before: String
+
     """distinct select on columns"""
     distinct_on: [user_info_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [user_info_order_by!]
 
     """filter the rows returned"""
     where: user_info_bool_exp
-  ): [user_info!]!
-
-  """
-  fetch aggregated fields from the table: "user_info"
-  """
-  user_info_aggregate(
-    """distinct select on columns"""
-    distinct_on: [user_info_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [user_info_order_by!]
-
-    """filter the rows returned"""
-    where: user_info_bool_exp
-  ): user_info_aggregate!
-
-  """fetch data from the table: "user_info" using primary key columns"""
-  user_info_by_pk(id: Int!): user_info
+  ): user_infoConnection!
 }
 
 """
 columns and relationships of "store"
 """
-type store {
+type store implements Node {
   address: String
   created_at: timestamptz!
-  id: uuid!
+  id: ID!
   name: String
 
   """An array relationship"""
@@ -2481,23 +2099,36 @@ type store {
     """filter the rows returned"""
     where: inventory_bool_exp
   ): inventory_aggregate!
+
+  """An array relationship connection"""
+  store_inventory_connection(
+    after: String
+    before: String
+
+    """distinct select on columns"""
+    distinct_on: [inventory_select_column!]
+    first: Int
+    last: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [inventory_order_by!]
+
+    """filter the rows returned"""
+    where: inventory_bool_exp
+  ): inventoryConnection!
 }
 
 """
-aggregated selection of "store"
+A Relay connection object on "store"
 """
-type store_aggregate {
-  aggregate: store_aggregate_fields
-  nodes: [store!]!
+type storeConnection {
+  edges: [storeEdge!]!
+  pageInfo: PageInfo!
 }
 
-"""
-aggregate fields of "store"
-"""
-type store_aggregate_fields {
-  count(columns: [store_select_column!], distinct: Boolean): Int!
-  max: store_max_fields
-  min: store_min_fields
+type storeEdge {
+  cursor: String!
+  node: store!
 }
 
 """
@@ -2531,22 +2162,6 @@ input store_insert_input {
   id: uuid
   name: String
   store_inventory: inventory_arr_rel_insert_input
-}
-
-"""aggregate max on columns"""
-type store_max_fields {
-  address: String
-  created_at: timestamptz
-  id: uuid
-  name: String
-}
-
-"""aggregate min on columns"""
-type store_min_fields {
-  address: String
-  created_at: timestamptz
-  id: uuid
-  name: String
 }
 
 """
@@ -2641,396 +2256,182 @@ type subscription_root {
   """
   fetch data from the table: "block"
   """
-  block(
+  block_connection(
+    after: String
+    before: String
+
     """distinct select on columns"""
     distinct_on: [block_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [block_order_by!]
 
     """filter the rows returned"""
     where: block_bool_exp
-  ): [block!]!
-
-  """
-  fetch aggregated fields from the table: "block"
-  """
-  block_aggregate(
-    """distinct select on columns"""
-    distinct_on: [block_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [block_order_by!]
-
-    """filter the rows returned"""
-    where: block_bool_exp
-  ): block_aggregate!
-
-  """fetch data from the table: "block" using primary key columns"""
-  block_by_pk(id: uuid!): block
+  ): blockConnection!
 
   """
   fetch data from the table: "brick"
   """
-  brick(
+  brick_connection(
+    after: String
+    before: String
+
     """distinct select on columns"""
     distinct_on: [brick_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [brick_order_by!]
 
     """filter the rows returned"""
     where: brick_bool_exp
-  ): [brick!]!
-
-  """
-  fetch aggregated fields from the table: "brick"
-  """
-  brick_aggregate(
-    """distinct select on columns"""
-    distinct_on: [brick_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [brick_order_by!]
-
-    """filter the rows returned"""
-    where: brick_bool_exp
-  ): brick_aggregate!
-
-  """fetch data from the table: "brick" using primary key columns"""
-  brick_by_pk(id: uuid!): brick
+  ): brickConnection!
 
   """
   fetch data from the table: "cart_item"
   """
-  cart_item(
+  cart_item_connection(
+    after: String
+    before: String
+
     """distinct select on columns"""
     distinct_on: [cart_item_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [cart_item_order_by!]
 
     """filter the rows returned"""
     where: cart_item_bool_exp
-  ): [cart_item!]!
-
-  """
-  fetch aggregated fields from the table: "cart_item"
-  """
-  cart_item_aggregate(
-    """distinct select on columns"""
-    distinct_on: [cart_item_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [cart_item_order_by!]
-
-    """filter the rows returned"""
-    where: cart_item_bool_exp
-  ): cart_item_aggregate!
-
-  """fetch data from the table: "cart_item" using primary key columns"""
-  cart_item_by_pk(id: uuid!): cart_item
+  ): cart_itemConnection!
 
   """
   fetch data from the table: "inventory"
   """
-  inventory(
+  inventory_connection(
+    after: String
+    before: String
+
     """distinct select on columns"""
     distinct_on: [inventory_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [inventory_order_by!]
 
     """filter the rows returned"""
     where: inventory_bool_exp
-  ): [inventory!]!
-
-  """
-  fetch aggregated fields from the table: "inventory"
-  """
-  inventory_aggregate(
-    """distinct select on columns"""
-    distinct_on: [inventory_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [inventory_order_by!]
-
-    """filter the rows returned"""
-    where: inventory_bool_exp
-  ): inventory_aggregate!
-
-  """fetch data from the table: "inventory" using primary key columns"""
-  inventory_by_pk(product_id: uuid!, store_id: uuid!): inventory
+  ): inventoryConnection!
+  node(
+    """A globally unique id"""
+    id: ID!
+  ): Node
 
   """
   fetch data from the table: "organization"
   """
-  organization(
+  organization_connection(
+    after: String
+    before: String
+
     """distinct select on columns"""
     distinct_on: [organization_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [organization_order_by!]
 
     """filter the rows returned"""
     where: organization_bool_exp
-  ): [organization!]!
-
-  """
-  fetch aggregated fields from the table: "organization"
-  """
-  organization_aggregate(
-    """distinct select on columns"""
-    distinct_on: [organization_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [organization_order_by!]
-
-    """filter the rows returned"""
-    where: organization_bool_exp
-  ): organization_aggregate!
-
-  """fetch data from the table: "organization" using primary key columns"""
-  organization_by_pk(id: Int!): organization
+  ): organizationConnection!
 
   """
   execute function "organization_descendant_users" which returns "user_info"
   """
-  organization_descendant_users(
+  organization_descendant_users_connection(
+    after: String
+
     """
     input parameters for function "organization_descendant_users"
     """
     args: organization_descendant_users_args!
+    before: String
 
     """distinct select on columns"""
     distinct_on: [user_info_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [user_info_order_by!]
 
     """filter the rows returned"""
     where: user_info_bool_exp
-  ): [user_info!]!
-
-  """
-  execute function "organization_descendant_users" and query aggregates on result of table type "user_info"
-  """
-  organization_descendant_users_aggregate(
-    """
-    input parameters for function "organization_descendant_users_aggregate"
-    """
-    args: organization_descendant_users_args!
-
-    """distinct select on columns"""
-    distinct_on: [user_info_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [user_info_order_by!]
-
-    """filter the rows returned"""
-    where: user_info_bool_exp
-  ): user_info_aggregate!
+  ): user_infoConnection!
 
   """
   fetch data from the table: "product"
   """
-  product(
+  product_connection(
+    after: String
+    before: String
+
     """distinct select on columns"""
     distinct_on: [product_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [product_order_by!]
 
     """filter the rows returned"""
     where: product_bool_exp
-  ): [product!]!
-
-  """
-  fetch aggregated fields from the table: "product"
-  """
-  product_aggregate(
-    """distinct select on columns"""
-    distinct_on: [product_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [product_order_by!]
-
-    """filter the rows returned"""
-    where: product_bool_exp
-  ): product_aggregate!
-
-  """fetch data from the table: "product" using primary key columns"""
-  product_by_pk(id: uuid!): product
+  ): productConnection!
 
   """
   fetch data from the table: "store"
   """
-  store(
+  store_connection(
+    after: String
+    before: String
+
     """distinct select on columns"""
     distinct_on: [store_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [store_order_by!]
 
     """filter the rows returned"""
     where: store_bool_exp
-  ): [store!]!
-
-  """
-  fetch aggregated fields from the table: "store"
-  """
-  store_aggregate(
-    """distinct select on columns"""
-    distinct_on: [store_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [store_order_by!]
-
-    """filter the rows returned"""
-    where: store_bool_exp
-  ): store_aggregate!
-
-  """fetch data from the table: "store" using primary key columns"""
-  store_by_pk(id: uuid!): store
+  ): storeConnection!
 
   """
   fetch data from the table: "user_info"
   """
-  user_info(
+  user_info_connection(
+    after: String
+    before: String
+
     """distinct select on columns"""
     distinct_on: [user_info_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
+    first: Int
+    last: Int
 
     """sort the rows by one or more columns"""
     order_by: [user_info_order_by!]
 
     """filter the rows returned"""
     where: user_info_bool_exp
-  ): [user_info!]!
-
-  """
-  fetch aggregated fields from the table: "user_info"
-  """
-  user_info_aggregate(
-    """distinct select on columns"""
-    distinct_on: [user_info_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [user_info_order_by!]
-
-    """filter the rows returned"""
-    where: user_info_bool_exp
-  ): user_info_aggregate!
-
-  """fetch data from the table: "user_info" using primary key columns"""
-  user_info_by_pk(id: Int!): user_info
+  ): user_infoConnection!
 }
 
 scalar timestamptz
@@ -3053,35 +2454,23 @@ input timestamptz_comparison_exp {
 """
 columns and relationships of "user_info"
 """
-type user_info {
+type user_info implements Node {
   email: String
-  id: Int!
+  id: ID!
   organization: Int!
 }
 
 """
-aggregated selection of "user_info"
+A Relay connection object on "user_info"
 """
-type user_info_aggregate {
-  aggregate: user_info_aggregate_fields
-  nodes: [user_info!]!
+type user_infoConnection {
+  edges: [user_infoEdge!]!
+  pageInfo: PageInfo!
 }
 
-"""
-aggregate fields of "user_info"
-"""
-type user_info_aggregate_fields {
-  avg: user_info_avg_fields
-  count(columns: [user_info_select_column!], distinct: Boolean): Int!
-  max: user_info_max_fields
-  min: user_info_min_fields
-  stddev: user_info_stddev_fields
-  stddev_pop: user_info_stddev_pop_fields
-  stddev_samp: user_info_stddev_samp_fields
-  sum: user_info_sum_fields
-  var_pop: user_info_var_pop_fields
-  var_samp: user_info_var_samp_fields
-  variance: user_info_variance_fields
+type user_infoEdge {
+  cursor: String!
+  node: user_info!
 }
 
 """
@@ -3099,12 +2488,6 @@ input user_info_aggregate_order_by {
   var_pop: user_info_var_pop_order_by
   var_samp: user_info_var_samp_order_by
   variance: user_info_variance_order_by
-}
-
-"""aggregate avg on columns"""
-type user_info_avg_fields {
-  id: Float
-  organization: Float
 }
 
 """
@@ -3155,13 +2538,6 @@ input user_info_insert_input {
   organization: Int
 }
 
-"""aggregate max on columns"""
-type user_info_max_fields {
-  email: String
-  id: Int
-  organization: Int
-}
-
 """
 order by max() on columns of table "user_info"
 """
@@ -3169,13 +2545,6 @@ input user_info_max_order_by {
   email: order_by
   id: order_by
   organization: order_by
-}
-
-"""aggregate min on columns"""
-type user_info_min_fields {
-  email: String
-  id: Int
-  organization: Int
 }
 
 """
@@ -3242,24 +2611,12 @@ input user_info_set_input {
   organization: Int
 }
 
-"""aggregate stddev on columns"""
-type user_info_stddev_fields {
-  id: Float
-  organization: Float
-}
-
 """
 order by stddev() on columns of table "user_info"
 """
 input user_info_stddev_order_by {
   id: order_by
   organization: order_by
-}
-
-"""aggregate stddev_pop on columns"""
-type user_info_stddev_pop_fields {
-  id: Float
-  organization: Float
 }
 
 """
@@ -3270,24 +2627,12 @@ input user_info_stddev_pop_order_by {
   organization: order_by
 }
 
-"""aggregate stddev_samp on columns"""
-type user_info_stddev_samp_fields {
-  id: Float
-  organization: Float
-}
-
 """
 order by stddev_samp() on columns of table "user_info"
 """
 input user_info_stddev_samp_order_by {
   id: order_by
   organization: order_by
-}
-
-"""aggregate sum on columns"""
-type user_info_sum_fields {
-  id: Int
-  organization: Int
 }
 
 """
@@ -3312,12 +2657,6 @@ enum user_info_update_column {
   organization
 }
 
-"""aggregate var_pop on columns"""
-type user_info_var_pop_fields {
-  id: Float
-  organization: Float
-}
-
 """
 order by var_pop() on columns of table "user_info"
 """
@@ -3326,24 +2665,12 @@ input user_info_var_pop_order_by {
   organization: order_by
 }
 
-"""aggregate var_samp on columns"""
-type user_info_var_samp_fields {
-  id: Float
-  organization: Float
-}
-
 """
 order by var_samp() on columns of table "user_info"
 """
 input user_info_var_samp_order_by {
   id: order_by
   organization: order_by
-}
-
-"""aggregate variance on columns"""
-type user_info_variance_fields {
-  id: Float
-  organization: Float
 }
 
 """

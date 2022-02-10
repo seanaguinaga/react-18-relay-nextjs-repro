@@ -6,7 +6,7 @@ export async function fetchGraphQL(
   token?: string | null
 ) {
   const response = await fetch(
-    "https://amused-bluejay-15.hasura.app/v1/graphql",
+    "https://amused-bluejay-15.hasura.app/v1beta1/relay",
     {
       method: "POST",
       headers: token

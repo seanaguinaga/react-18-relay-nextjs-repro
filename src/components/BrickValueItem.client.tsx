@@ -16,7 +16,7 @@ const BrickValueItem: React.FC<BrickItemProps> = ({ brick }) => {
     brick
   );
 
-  return <ion-item>{data.value}</ion-item>;
+  return <ion-item onClick={() => refetch({})}>{data.value}</ion-item>;
 };
 
 export default BrickValueItem;

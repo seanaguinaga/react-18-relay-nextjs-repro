@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<78da3c52d881edf59f1875324c4b52b1>>
+ * @generated SignedSource<<eede4215143966b6db00071e8be507f9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -8,10 +8,11 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Fragment, ReaderFragment } from 'relay-runtime';
+import { ReaderFragment, RefetchableFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type BrickValueItem_brick$data = {
   readonly value: string;
+  readonly id: string;
   readonly " $fragmentType": "BrickValueItem_brick";
 };
 export type BrickValueItem_brick$key = {
@@ -22,7 +23,16 @@ export type BrickValueItem_brick$key = {
 const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
-  "metadata": null,
+  "metadata": {
+    "refetch": {
+      "connection": null,
+      "fragmentPathInResult": [
+        "node"
+      ],
+      "operation": require('./BrickValueItemRefetchQuery.graphql'),
+      "identifierField": "id"
+    }
+  },
   "name": "BrickValueItem_brick",
   "selections": [
     {
@@ -31,12 +41,19 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "value",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "id",
+      "storageKey": null
     }
   ],
   "type": "brick",
   "abstractKey": null
 };
 
-(node as any).hash = "25099012f8a4ecaa9517f224fbf2e13e";
+(node as any).hash = "ee54336c5f180238d96d70205336503e";
 
 export default node;
