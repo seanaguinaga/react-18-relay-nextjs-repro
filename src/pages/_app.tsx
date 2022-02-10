@@ -9,12 +9,20 @@ import "@ionic/core/css/text-alignment.css";
 import "@ionic/core/css/text-transformation.css";
 import "@ionic/core/css/typography.css";
 import { defineCustomElements } from "@ionic/core/loader";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import type { AppProps } from "next/app";
 import React, { useEffect } from "react";
 import { RelayEnvironmentProvider } from "react-relay";
+import getFirebaseApp from "../firebase/getApp";
+import initAuth from "../firebase/initAuth";
 import { useEnvironment } from "../relay";
 
+let auth = getAuth(getFirebaseApp());
+
+initAuth();
+
 function MyApp({ Component, pageProps }: AppProps) {
+  let authUser = onAuthStateChanged(auth, (user) => console.log(user));
   const environment = useEnvironment(pageProps.initialRecords);
 
   useEffect(() => {
