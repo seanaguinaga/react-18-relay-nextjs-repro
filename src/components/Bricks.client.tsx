@@ -45,13 +45,14 @@ const Bricks: React.FC<BricksProps> = () => {
       <ion-list-header>Bricks</ion-list-header>
       {data?.brick_connection.edges.map((brick) => (
         <Suspense
+          key={brick.node.id}
           fallback={
             <ion-item>
               <ion-skeleton-text />
             </ion-item>
           }
         >
-          <BrickValueItem key={brick.node.id} brick={brick.node} />
+          <BrickValueItem brick={brick.node} />
         </Suspense>
       ))}
     </ion-list>

@@ -1,12 +1,10 @@
-import { withAuthUserTokenSSR } from "next-firebase-auth";
+import { withAuthUser } from "next-firebase-auth";
 import Link from "next/link";
 import React, { Suspense } from "react";
-import { fetchQuery } from "react-relay";
 import Bricks from "../components/Bricks.client";
-import indexPage from "../queries/indexPage";
-import { initEnvironment } from "../relay";
+import withRelay from "../components/withRelay";
 
-export default function Home() {
+function Home() {
   return (
     <div>
       <Link href="/rsc" passHref>
@@ -19,22 +17,4 @@ export default function Home() {
   );
 }
 
-export const getServerSideProps = withAuthUserTokenSSR()(
-  async ({ AuthUser }) => {
-    let token = await AuthUser.getIdToken();
-    if (token) {
-      const environment = initEnvironment(undefined, token);
-      await fetchQuery(environment, indexPage, {}).toPromise();
-      const initialRecords = environment.getStore().getSource().toJSON();
-      return {
-        props: {
-          initialRecords,
-        },
-      };
-    } else {
-      return {
-        props: {},
-      };
-    }
-  }
-);
+export default withAuthUser()(withRelay(Home));
