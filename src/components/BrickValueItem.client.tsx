@@ -1,6 +1,6 @@
+import { useCallback, useTransition } from "react";
 import { graphql, useRefetchableFragment } from "react-relay";
 import { BrickValueItem_brick$key } from "./__generated__/BrickValueItem_brick.graphql";
-
 interface BrickItemProps {
   brick: BrickValueItem_brick$key;
 }
@@ -16,7 +16,19 @@ const BrickValueItem: React.FC<BrickItemProps> = ({ brick }) => {
     brick
   );
 
-  return <ion-item onClick={() => refetch({})}>{data.value}</ion-item>;
+  const [isPending, startTransition] = useTransition();
+
+  let handleRefetch = useCallback(() => {
+    startTransition(() => {
+      refetch({});
+    });
+  }, []);
+
+  return (
+    <ion-item color={isPending ? "primary" : undefined} onClick={handleRefetch}>
+      {data.value}
+    </ion-item>
+  );
 };
 
 export default BrickValueItem;
