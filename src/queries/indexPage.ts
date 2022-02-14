@@ -2,9 +2,13 @@ import { graphql } from "react-relay";
 
 export default graphql`
   query indexPage_indexQuery {
-    block {
-      id
-      value
+    brick_connection {
+      edges {
+        node {
+          id
+          value
+        }
+      }
     }
   }
 `;
