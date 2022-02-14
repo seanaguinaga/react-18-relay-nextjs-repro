@@ -1,4 +1,9 @@
-import { useAuthUser, withAuthUser } from "next-firebase-auth";
+import {
+  AuthAction,
+  useAuthUser,
+  withAuthUser,
+  withAuthUserTokenSSR,
+} from "next-firebase-auth";
 import Link from "next/link";
 import React, { Suspense } from "react";
 import { loadQuery } from "react-relay";
@@ -10,7 +15,7 @@ import { useEnvironment } from "../relay";
 const Home = () => {
   let AuthUser = useAuthUser();
 
-  console.log(AuthUser);
+  console.log(AuthUser.claims);
 
   let environment = useEnvironment(null);
 
@@ -25,6 +30,7 @@ const Home = () => {
       <Link href="/rsc" passHref>
         <ion-item>RSC</ion-item>
       </Link>
+      <ion-item onClick={() => AuthUser.signOut()}>Sign Out</ion-item>
       <Suspense fallback={<div>Loading...</div>}>
         <Blocks queryReference={preloadedQuery} />
       </Suspense>
@@ -32,4 +38,10 @@ const Home = () => {
   );
 };
 
-export default withAuthUser()(Home);
+export const getServerSideProps = withAuthUserTokenSSR()(async () => {
+  return { props: {} };
+});
+
+export default withAuthUser({
+  whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
+})(Home);
